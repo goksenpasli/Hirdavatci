@@ -194,6 +194,7 @@ namespace Hirdavatci
         private double satisFiyat;
 
         private DateTime tarih = DateTime.Today;
+        private double toplamGelir;
 
         [XmlAttribute(AttributeName = "Id")]
         public int Id
@@ -251,6 +252,25 @@ namespace Hirdavatci
                 {
                     satisFiyat = value;
                     OnPropertyChanged(nameof(SatisFiyat));
+                }
+            }
+        }
+
+        [XmlAttribute(AttributeName = "ToplamGelir")]
+        public double ToplamGelir
+        {
+            get
+            {
+                toplamGelir = SatisFiyat * SatisAdet;
+                return toplamGelir;
+            }
+
+            set
+            {
+                if (toplamGelir != value)
+                {
+                    toplamGelir = value;
+                    OnPropertyChanged(nameof(ToplamGelir));
                 }
             }
         }

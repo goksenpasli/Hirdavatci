@@ -71,7 +71,7 @@ namespace Hirdavatci
                         Tarih = Satis.Tarih
                     };
 
-                    dc.KalanAdet = dc.ToplamAdet - Satis.SatisAdet;
+                    dc.KalanAdet -= Satis.SatisAdet;
                     dc.Satislar.Add(satis);
                     XmlSerializer serializer = new(typeof(Malzemeler));
                     using TextWriter writer = new StreamWriter(ExtensionMethods.xmldatapath);

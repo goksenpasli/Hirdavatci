@@ -86,6 +86,15 @@
                 </Grid.RowDefinitions>
                 <GroupBox Header="DEPO DURUMU" Grid.Row="0">
                     <ListView x:Name="listView" ItemsSource="{Binding Malzemeler.Malzeme}" Extensions:GridViewSort.AutoSort="True">
+                        <ListView.ItemContainerStyle>
+                            <Style TargetType="ListViewItem">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding KalanAdet}" Value="0">
+                                        <Setter Property="Background" Value="Red" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </ListView.ItemContainerStyle>
                         <ListView.View>
                             <GridView>
                                 <GridViewColumn Header="MALZEME&#x0a;ADI"
@@ -206,6 +215,10 @@
                                                 Width="80"
                                                 Extensions:GridViewSort.PropertyName="SatisFiyat"
                                                 DisplayMemberBinding="{Binding SatisFiyat, StringFormat=\{0:C\}}" />
+                                            <GridViewColumn Header="TOPLAM&#x0a;GELİR"
+                                                Width="80"
+                                                Extensions:GridViewSort.PropertyName="ToplamGelir"
+                                                DisplayMemberBinding="{Binding ToplamGelir, StringFormat=\{0:C\}}" />
                                             <GridViewColumn Header="SATIŞ&#x0a;TARİHİ"
                                                 Width="80"
                                                 Extensions:GridViewSort.PropertyName="Tarih"
