@@ -29,7 +29,7 @@ namespace Extensions
 
         protected override void OnPreviewKeyDown(KeyEventArgs e)
         {
-            if (e.Key is not ((>= Key.NumPad0 and <= Key.NumPad9) or (>= Key.D0 and <= Key.D9) or Key.OemComma or Key.Back))
+            if (e.Key is not ((>= Key.NumPad0 and <= Key.NumPad9) or (>= Key.D0 and <= Key.D9) or Key.OemComma or Key.Back or Key.Tab))
             {
                 e.Handled = true;
             }

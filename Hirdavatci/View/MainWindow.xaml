@@ -15,6 +15,9 @@
         <Extensions:StringNullableToBooleanConverter x:Key="StringNullableToBooleanConverter" />
         <Extensions:SystemFileIconConverter x:Key="SystemFileIconConverter" />
         <local:BarcodeToImageConverter x:Key="BarcodeToImageConverter" />
+        <Style TargetType="HeaderedContentControl">
+            <Setter Property="IsTabStop" Value="False" />
+        </Style>
     </Window.Resources>
     <Grid x:Name="grid">
         <Grid.ColumnDefinitions>
@@ -200,7 +203,37 @@
                         </TabItem>
                         <TabItem Header="SATIŞLAR">
                             <Grid>
-                                <ListView ItemsSource="{Binding ElementName=listView, Path=SelectedItem.Satislar}" Extensions:GridViewSort.AutoSort="True">
+                                <Grid.Resources>
+                                    <CollectionViewSource x:Key="Cvs" d:DesignSource="{d:DesignInstance Type=local:Satis, CreateList=True}" Source="{Binding ElementName=listView, Path=SelectedItem.Satislar}">
+                                        <CollectionViewSource.GroupDescriptions>
+                                            <PropertyGroupDescription PropertyName="Tarih" />
+                                        </CollectionViewSource.GroupDescriptions>
+                                    </CollectionViewSource>
+                                </Grid.Resources>
+                                <ListView ItemsSource="{Binding Mode=OneWay, Source={StaticResource Cvs}}" Extensions:GridViewSort.AutoSort="True">
+                                    <ListView.GroupStyle>
+                                        <GroupStyle>
+                                            <GroupStyle.ContainerStyle>
+                                                <Style TargetType="{x:Type GroupItem}">
+                                                    <Setter Property="Template">
+                                                        <Setter.Value>
+                                                            <ControlTemplate>
+                                                                <Expander IsExpanded="True">
+                                                                    <Expander.Header>
+                                                                        <TextBlock>
+                                                                            <Run Text="{Binding Name, Mode=OneWay, StringFormat=\{0:D\}}" FontWeight="Bold" Language="tr-tr" />
+                                                                            <Run Text="{Binding ItemCount, Mode=OneWay, StringFormat={}{0} Adet}" Foreground="Red" />
+                                                                        </TextBlock>
+                                                                    </Expander.Header>
+                                                                    <ItemsPresenter />
+                                                                </Expander>
+                                                            </ControlTemplate>
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                </Style>
+                                            </GroupStyle.ContainerStyle>
+                                        </GroupStyle>
+                                    </ListView.GroupStyle>
                                     <ListView.View>
                                         <GridView>
                                             <GridViewColumn Header="SATIN ALAN&#x0a;KİŞİ"
