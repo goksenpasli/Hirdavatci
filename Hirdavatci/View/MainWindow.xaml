@@ -138,6 +138,10 @@
                                     Width="80"
                                     Extensions:GridViewSort.PropertyName="ToplamAdet"
                                     DisplayMemberBinding="{Binding ToplamAdet}" />
+                                <GridViewColumn Header="KALAN&#x0a;ADET"
+                                    Width="80"
+                                    Extensions:GridViewSort.PropertyName="KalanAdet"
+                                    DisplayMemberBinding="{Binding KalanAdet}" />
                             </GridView>
                         </ListView.View>
                     </ListView>

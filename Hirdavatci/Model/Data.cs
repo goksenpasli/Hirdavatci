@@ -24,6 +24,7 @@ namespace Hirdavatci
         private ObservableCollection<Satis> satislar = new();
 
         private int toplamAdet;
+        private int kalanAdet;
 
         [XmlAttribute(AttributeName = "Aciklama")]
         public string Aciklama
@@ -143,6 +144,21 @@ namespace Hirdavatci
                 }
             }
         }
+
+        [XmlAttribute(AttributeName = "KalanAdet")]
+        public int KalanAdet
+        {
+            get => kalanAdet;
+
+            set
+            {
+                if (kalanAdet != value)
+                {
+                    kalanAdet = value;
+                    OnPropertyChanged(nameof(KalanAdet));
+                }
+            }
+        }
     }
 
     [XmlRoot(ElementName = "Malzemeler")]
@@ -173,7 +189,7 @@ namespace Hirdavatci
 
         private string satinAlanKisi;
 
-        private double satisAdet;
+        private int satisAdet;
 
         private double satisFiyat;
 
@@ -210,7 +226,7 @@ namespace Hirdavatci
         }
 
         [XmlAttribute(AttributeName = "SatisAdet")]
-        public double SatisAdet
+        public int SatisAdet
         {
             get => satisAdet;
 

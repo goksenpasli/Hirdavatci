@@ -31,7 +31,8 @@ namespace Hirdavatci
                         ToplamAdet = dc.ToplamAdet,
                         BirimFiyat = dc.BirimFiyat,
                         Aciklama = dc.Aciklama,
-                        Barkod = dc.Barkod
+                        Barkod = dc.Barkod,
+                        KalanAdet = dc.ToplamAdet
                     };
                     Malzemeler.Malzeme.Add(malzeme);
                     XmlSerializer serializer = new(typeof(Malzemeler));
@@ -56,9 +57,9 @@ namespace Hirdavatci
             {
                 if (parameter is Malzeme dc)
                 {
-                    if (Satis.SatisAdet > dc.ToplamAdet)
+                    if (Satis.SatisAdet > dc.KalanAdet)
                     {
-                        MessageBox.Show("Satış Adeti Toplam Adetten Fazla Olmaz.", "HIRDAVATÇI", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                        MessageBox.Show("Satış Adeti Kalan Adetten Fazla Olamaz.", "HIRDAVATÇI", MessageBoxButton.OK, MessageBoxImage.Exclamation);
                         return;
                     }
                     Satis satis = new()
@@ -70,6 +71,7 @@ namespace Hirdavatci
                         Tarih = Satis.Tarih
                     };
 
+                    dc.KalanAdet = dc.ToplamAdet - Satis.SatisAdet;
                     dc.Satislar.Add(satis);
                     XmlSerializer serializer = new(typeof(Malzemeler));
                     using TextWriter writer = new StreamWriter(ExtensionMethods.xmldatapath);
