@@ -94,9 +94,9 @@ namespace Hirdavatci
 
         private void Malzeme_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName is "Barkod" or "BirimFiyat" or "Aciklama")
+            if (e.PropertyName is "Barkod")
             {
-                Malzeme.BarkodImage = $"{Malzeme.Aciklama}\n{Malzeme.Barkod}\nFiyat:{Malzeme.BirimFiyat} TL".GenerateBarCodeImage();
+                Malzeme.BarkodImage = $"{Malzeme.Barkod}".GenerateBarCodeImage();
             }
 
             if (e.PropertyName == "BarKodAramaMetni")
