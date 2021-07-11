@@ -1,0 +1,219 @@
+﻿<Window x:Class="Hirdavatci.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:Extensions="clr-namespace:Extensions;assembly=Extensions"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:local="clr-namespace:Hirdavatci"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:system="clr-namespace:System;assembly=mscorlib"
+    Title="HIRDAVATÇI"
+    Width="800" Height="600"
+    d:DataContext="{d:DesignInstance Type=local:MainViewModel}"
+    UseLayoutRounding="True" WindowStartupLocation="CenterScreen" WindowState="Maximized"
+    mc:Ignorable="d">
+    <Window.Resources>
+        <Extensions:NullableToBooleanConverter x:Key="NullableToBooleanConverter" />
+        <Extensions:StringNullableToBooleanConverter x:Key="StringNullableToBooleanConverter" />
+        <Extensions:SystemFileIconConverter x:Key="SystemFileIconConverter" />
+        <local:BarcodeToImageConverter x:Key="BarcodeToImageConverter" />
+    </Window.Resources>
+    <Grid x:Name="grid">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="2*" />
+            <ColumnDefinition Width="3*" />
+        </Grid.ColumnDefinitions>
+        <GroupBox Header="MALZEMELER">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <StackPanel>
+                    <HeaderedContentControl Header="MALZEME ADI">
+                        <TextBox Text="{Binding Malzeme.Aciklama, UpdateSourceTrigger=PropertyChanged}" />
+                    </HeaderedContentControl>
+                    <HeaderedContentControl Header="MALZEME BİRİM FİYATI">
+                        <Extensions:NumericUpDownControl Maximum="{x:Static system:Double.MaxValue}"
+                            Orientation="Horizontal" SmallChange="1"
+                            Value="{Binding Malzeme.BirimFiyat, UpdateSourceTrigger=PropertyChanged}" />
+                    </HeaderedContentControl>
+                    <HeaderedContentControl Header="MALZEME TOPLAM ADETİ">
+                        <Extensions:NumericUpDownControl Maximum="{x:Static system:Double.MaxValue}"
+                            Orientation="Horizontal" SmallChange="1"
+                            Value="{Binding Malzeme.ToplamAdet, UpdateSourceTrigger=PropertyChanged}" />
+                    </HeaderedContentControl>
+                    <HeaderedContentControl Header="MALZEME KAREKOD">
+                        <TextBox Text="{Binding Malzeme.Barkod, UpdateSourceTrigger=PropertyChanged}" />
+                    </HeaderedContentControl>
+                    <Button IsEnabled="{Binding Source, Converter={StaticResource NullableToBooleanConverter}, ElementName=Img}" Command="{Binding KareKodYazdır}" CommandParameter="{Binding ElementName=Img}">
+                        <StackPanel Orientation="Horizontal">
+                            <Image Width="32" Height="32">
+                                <Image.Source>
+                                    <MultiBinding Converter="{StaticResource SystemFileIconConverter}">
+                                        <Binding Source="Shell32.dll" />
+                                        <Binding Source="136" />
+                                    </MultiBinding>
+                                </Image.Source>
+                            </Image>
+                            <TextBlock Text="KAREKOD YAZDIR" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button>
+                    <Image x:Name="Img"
+                        Width="175" Height="175"
+                        Source="{Binding Malzeme.BarkodImage}" />
+                </StackPanel>
+                <Button Grid.Row="2" Command="{Binding DepoyaEkle}" CommandParameter="{Binding Malzeme}">
+                    <Button.Content>
+                        <StackPanel Orientation="Horizontal">
+                            <Image Width="32" Height="32">
+                                <Image.Source>
+                                    <MultiBinding Converter="{StaticResource SystemFileIconConverter}">
+                                        <Binding Source="Shell32.dll" />
+                                        <Binding Source="137" />
+                                    </MultiBinding>
+                                </Image.Source>
+                            </Image>
+                            <TextBlock Text="MALZEME GİRİŞİ YAP" VerticalAlignment="Center" />
+                        </StackPanel>
+                    </Button.Content>
+                </Button>
+            </Grid>
+        </GroupBox>
+        <GroupBox Header="DEPO" Grid.Column="1">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <GroupBox Header="DEPO DURUMU" Grid.Row="0">
+                    <ListView x:Name="listView" ItemsSource="{Binding Malzemeler.Malzeme}" Extensions:GridViewSort.AutoSort="True">
+                        <ListView.View>
+                            <GridView>
+                                <GridViewColumn Header="MALZEME&#x0a;ADI"
+                                    Width="200"
+                                    Extensions:GridViewSort.PropertyName="Aciklama"
+                                    DisplayMemberBinding="{Binding Aciklama}" />
+                                <GridViewColumn Width="180" Extensions:GridViewSort.PropertyName="Barkod">
+                                    <GridViewColumn.HeaderTemplate>
+                                        <DataTemplate>
+                                            <UniformGrid Columns="2">
+                                                <TextBox Text="{Binding DataContext.Malzeme.BarKodAramaMetni, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, RelativeSource={RelativeSource AncestorType=ListView}}" Width="80" VerticalContentAlignment="Center">
+                                                    <TextBox.Style>
+                                                        <Style TargetType="TextBox">
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding DataContext.Malzeme.BarKodAramaMetni, Converter={StaticResource StringNullableToBooleanConverter}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, RelativeSource={RelativeSource AncestorType=ListView}}" Value="true">
+                                                                    <Setter Property="BorderBrush" Value="Green" />
+                                                                    <Setter Property="BorderThickness" Value="2" />
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </TextBox.Style>
+                                                </TextBox>
+                                                <TextBlock Text="MALZEME&#x0a;KAREKOD" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                            </UniformGrid>
+                                        </DataTemplate>
+                                    </GridViewColumn.HeaderTemplate>
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Extensions:ContentToggleButton Background="{x:Null}"
+                                                BorderBrush="{x:Null}"
+                                                Cursor="Hand"
+                                                OverContent="{Binding Barkod}">
+                                                <Extensions:ContentToggleButton.Content>
+                                                    <StackPanel>
+                                                        <Image x:Name="Img"
+                                                            Width="175" Height="175"
+                                                            Source="{Binding Barkod, Converter={StaticResource BarcodeToImageConverter}}" />
+                                                        <Button Content="KAREKOD YAZDIR" Command="{Binding DataContext.KareKodYazdır, ElementName=grid}" CommandParameter="{Binding ElementName=Img}" />
+                                                    </StackPanel>
+                                                </Extensions:ContentToggleButton.Content>
+                                            </Extensions:ContentToggleButton>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+                                <GridViewColumn Header="BİRİM&#x0a;FİYAT"
+                                    Width="80"
+                                    Extensions:GridViewSort.PropertyName="BirimFiyat"
+                                    DisplayMemberBinding="{Binding BirimFiyat, StringFormat=\{0:C\}}" />
+                                <GridViewColumn Header="TOPLAM&#x0a;ADET"
+                                    Width="80"
+                                    Extensions:GridViewSort.PropertyName="ToplamAdet"
+                                    DisplayMemberBinding="{Binding ToplamAdet}" />
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
+                </GroupBox>
+                <GroupBox Header="SATIŞLAR" Grid.Row="1">
+                    <TabControl>
+                        <TabItem Header="SATIŞ EKLE">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <StackPanel>
+                                    <HeaderedContentControl Header="SATIN ALAN KİŞİ">
+                                        <TextBox Text="{Binding Satis.SatinAlanKisi, UpdateSourceTrigger=PropertyChanged}" />
+                                    </HeaderedContentControl>
+                                    <HeaderedContentControl Header="ADET">
+                                        <Extensions:NumericUpDownControl Maximum="{x:Static system:Double.MaxValue}"
+                                            Orientation="Horizontal" SmallChange="1"
+                                            Value="{Binding Satis.SatisAdet, UpdateSourceTrigger=PropertyChanged}" />
+                                    </HeaderedContentControl>
+                                    <HeaderedContentControl Header="SATIŞ FİYATI">
+                                        <Extensions:NumericUpDownControl Maximum="{x:Static system:Double.MaxValue}"
+                                            Orientation="Horizontal" SmallChange="1"
+                                            Value="{Binding Satis.SatisFiyat, UpdateSourceTrigger=PropertyChanged}" />
+                                    </HeaderedContentControl>
+                                    <HeaderedContentControl Header="SATIŞ TARİHİ">
+                                        <DatePicker IsEnabled="False" SelectedDate="{Binding Satis.Tarih, UpdateSourceTrigger=PropertyChanged}" />
+                                    </HeaderedContentControl>
+                                </StackPanel>
+                                <Button Grid.Row="1" Command="{Binding SatışKaydıEkle, Mode=OneWay}" CommandParameter="{Binding SelectedItem, ElementName=listView}">
+                                    <Button.Content>
+                                        <StackPanel Orientation="Horizontal">
+                                            <Image Width="32" Height="32">
+                                                <Image.Source>
+                                                    <MultiBinding Converter="{StaticResource SystemFileIconConverter}">
+                                                        <Binding Source="Shell32.dll" />
+                                                        <Binding Source="137" />
+                                                    </MultiBinding>
+                                                </Image.Source>
+                                            </Image>
+                                            <TextBlock Text="SATIŞ KAYDI EKLE" VerticalAlignment="Center" />
+                                        </StackPanel>
+                                    </Button.Content>
+                                </Button>
+                            </Grid>
+                        </TabItem>
+                        <TabItem Header="SATIŞLAR">
+                            <Grid>
+                                <ListView ItemsSource="{Binding ElementName=listView, Path=SelectedItem.Satislar}" Extensions:GridViewSort.AutoSort="True">
+                                    <ListView.View>
+                                        <GridView>
+                                            <GridViewColumn Header="SATIN ALAN&#x0a;KİŞİ"
+                                                Width="100"
+                                                Extensions:GridViewSort.PropertyName="SatinAlanKisi"
+                                                DisplayMemberBinding="{Binding SatinAlanKisi}" />
+                                            <GridViewColumn Header="SATIŞ&#x0a;ADETİ"
+                                                Width="50"
+                                                Extensions:GridViewSort.PropertyName="SatisAdet"
+                                                DisplayMemberBinding="{Binding SatisAdet}" />
+                                            <GridViewColumn Header="SATIŞ&#x0a;FİYATI"
+                                                Width="80"
+                                                Extensions:GridViewSort.PropertyName="SatisFiyat"
+                                                DisplayMemberBinding="{Binding SatisFiyat, StringFormat=\{0:C\}}" />
+                                            <GridViewColumn Header="SATIŞ&#x0a;TARİHİ"
+                                                Width="80"
+                                                Extensions:GridViewSort.PropertyName="Tarih"
+                                                DisplayMemberBinding="{Binding Tarih, StringFormat=\{0:d\}}" />
+                                        </GridView>
+                                    </ListView.View>
+                                </ListView>
+                            </Grid>
+                        </TabItem>
+                    </TabControl>
+                </GroupBox>
+            </Grid>
+        </GroupBox>
+    </Grid>
+</Window>
