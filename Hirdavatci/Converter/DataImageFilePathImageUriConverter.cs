@@ -12,7 +12,7 @@ namespace Hirdavatci
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (!DesignerProperties.GetIsInDesignMode(new DependencyObject()) && value is string filename && !string.IsNullOrEmpty(filename))
+            if (!DesignerProperties.GetIsInDesignMode(new DependencyObject()) && value is string filename && !string.IsNullOrEmpty(filename) && File.Exists($"{Path.GetDirectoryName(ExtensionMethods.xmldatapath)}\\{filename}"))
             {
                 BitmapImage image = new();
                 image.BeginInit();
