@@ -4,7 +4,7 @@
     xmlns:Extensions="clr-namespace:Extensions;assembly=Extensions"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:local="clr-namespace:Hirdavatci"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:system="clr-namespace:System;assembly=mscorlib"
+    xmlns:system="clr-namespace:System;assembly=mscorlib" xmlns:zxing="clr-namespace:ZXing;assembly=zxing"
     Title="HIRDAVATÇI"
     Width="800" Height="600"
     d:DataContext="{d:DesignInstance Type=local:MainViewModel}"
@@ -23,6 +23,11 @@
                 <PropertyGroupDescription PropertyName="Tarih" />
             </CollectionViewSource.GroupDescriptions>
         </CollectionViewSource>
+        <ObjectDataProvider x:Key="Barcodes" MethodName="GetValues" ObjectType="{x:Type system:Enum}">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="zxing:BarcodeFormat" />
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
     </Window.Resources>
     <Grid x:Name="grid">
         <Grid.ColumnDefinitions>
@@ -49,9 +54,10 @@
                             Orientation="Horizontal" SmallChange="1"
                             Value="{Binding Malzeme.ToplamAdet, UpdateSourceTrigger=PropertyChanged}" />
                     </HeaderedContentControl>
-                    <HeaderedContentControl Header="MALZEME KAREKOD">
+                    <HeaderedContentControl Header="MALZEME KOD">
                         <TextBox Text="{Binding Malzeme.Barkod, UpdateSourceTrigger=PropertyChanged}" />
                     </HeaderedContentControl>
+                    <ComboBox ItemsSource="{Binding Mode=OneWay, Source={StaticResource Barcodes}}" SelectedItem="{Binding Malzeme.BarcodeFormat}" />
                     <Button IsEnabled="{Binding Source, Converter={StaticResource NullableToBooleanConverter}, ElementName=Img}" Command="{Binding KareKodYazdır}" CommandParameter="{Binding ElementName=Img}">
                         <StackPanel Orientation="Horizontal">
                             <Image Width="32" Height="32">
@@ -62,7 +68,7 @@
                                     </MultiBinding>
                                 </Image.Source>
                             </Image>
-                            <TextBlock Text="KAREKOD YAZDIR" VerticalAlignment="Center" />
+                            <TextBlock Text="KOD YAZDIR" VerticalAlignment="Center" />
                         </StackPanel>
                     </Button>
                     <Image x:Name="Img"

@@ -5,6 +5,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
+using ZXing;
 
 namespace Hirdavatci
 {
@@ -113,11 +114,11 @@ namespace Hirdavatci
 
         private void Malzeme_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName is "Barkod")
+            if (e.PropertyName is "Barkod" or "BarcodeFormat")
             {
                 try
                 {
-                    Malzeme.BarkodImage = $"{Malzeme.Barkod}".GenerateBarCodeImage();
+                    Malzeme.BarkodImage = $"{Malzeme.Barkod}".GenerateBarCodeImage(Malzeme.BarcodeFormat);
                 }
                 catch (Exception ex)
                 {

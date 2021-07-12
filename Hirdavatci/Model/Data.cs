@@ -3,6 +3,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.Windows.Media.Imaging;
 using System.Xml.Serialization;
+using ZXing;
 
 namespace Hirdavatci
 {
@@ -10,6 +11,8 @@ namespace Hirdavatci
     public class Malzeme : InpcBase
     {
         private string aciklama;
+
+        private BarcodeFormat barcodeFormat = BarcodeFormat.QR_CODE;
 
         private string barkod;
 
@@ -40,6 +43,21 @@ namespace Hirdavatci
                 {
                     aciklama = value;
                     OnPropertyChanged(nameof(Aciklama));
+                }
+            }
+        }
+
+        [XmlIgnore]
+        public BarcodeFormat BarcodeFormat
+        {
+            get => barcodeFormat;
+
+            set
+            {
+                if (barcodeFormat != value)
+                {
+                    barcodeFormat = value;
+                    OnPropertyChanged(nameof(BarcodeFormat));
                 }
             }
         }

@@ -13,11 +13,11 @@ namespace Hirdavatci
     {
         public static readonly string xmldatapath = Path.GetDirectoryName(ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.PerUserRoamingAndLocal).FilePath) + @"\Data.xml";
 
-        public static BitmapImage GenerateBarCodeImage(this string Barkod)
+        public static BitmapImage GenerateBarCodeImage(this string Barkod, BarcodeFormat format = BarcodeFormat.QR_CODE)
         {
             BarcodeWriter writer = new()
             {
-                Format = BarcodeFormat.QR_CODE,
+                Format = format,
                 Options = new ZXing.Common.EncodingOptions
                 {
                     Height = 175,
@@ -47,7 +47,7 @@ namespace Hirdavatci
             return new ObservableCollection<Malzeme>();
         }
 
-        public static void Serialize<T>(this T dataToSerialize)
+        public static void Serialize<T>(this T dataToSerialize) where T : class
         {
             XmlSerializer serializer = new(typeof(T));
             using TextWriter stream = new StreamWriter(xmldatapath);
