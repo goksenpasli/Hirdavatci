@@ -19,12 +19,15 @@ namespace Hirdavatci
 
         private double birimFiyat;
 
+        private int eklenenMalzemeAdeti;
+
         private int ıd;
+
+        private int kalanAdet;
 
         private ObservableCollection<Satis> satislar = new();
 
         private int toplamAdet;
-        private int kalanAdet;
 
         [XmlAttribute(AttributeName = "Aciklama")]
         public string Aciklama
@@ -100,6 +103,21 @@ namespace Hirdavatci
             }
         }
 
+        [XmlIgnore]
+        public int EklenenMalzemeAdeti
+        {
+            get => eklenenMalzemeAdeti;
+
+            set
+            {
+                if (eklenenMalzemeAdeti != value)
+                {
+                    eklenenMalzemeAdeti = value;
+                    OnPropertyChanged(nameof(EklenenMalzemeAdeti));
+                }
+            }
+        }
+
         [XmlAttribute(AttributeName = "Id")]
         public int Id
         {
@@ -111,6 +129,21 @@ namespace Hirdavatci
                 {
                     ıd = value;
                     OnPropertyChanged(nameof(Id));
+                }
+            }
+        }
+
+        [XmlAttribute(AttributeName = "KalanAdet")]
+        public int KalanAdet
+        {
+            get => kalanAdet;
+
+            set
+            {
+                if (kalanAdet != value)
+                {
+                    kalanAdet = value;
+                    OnPropertyChanged(nameof(KalanAdet));
                 }
             }
         }
@@ -141,21 +174,6 @@ namespace Hirdavatci
                 {
                     toplamAdet = value;
                     OnPropertyChanged(nameof(ToplamAdet));
-                }
-            }
-        }
-
-        [XmlAttribute(AttributeName = "KalanAdet")]
-        public int KalanAdet
-        {
-            get => kalanAdet;
-
-            set
-            {
-                if (kalanAdet != value)
-                {
-                    kalanAdet = value;
-                    OnPropertyChanged(nameof(KalanAdet));
                 }
             }
         }
@@ -194,6 +212,7 @@ namespace Hirdavatci
         private double satisFiyat;
 
         private DateTime tarih = DateTime.Today;
+
         private double toplamGelir;
 
         [XmlAttribute(AttributeName = "Id")]
@@ -256,6 +275,21 @@ namespace Hirdavatci
             }
         }
 
+        [XmlAttribute(AttributeName = "Tarih")]
+        public DateTime Tarih
+        {
+            get => tarih;
+
+            set
+            {
+                if (tarih != value)
+                {
+                    tarih = value;
+                    OnPropertyChanged(nameof(Tarih));
+                }
+            }
+        }
+
         [XmlAttribute(AttributeName = "ToplamGelir")]
         public double ToplamGelir
         {
@@ -271,21 +305,6 @@ namespace Hirdavatci
                 {
                     toplamGelir = value;
                     OnPropertyChanged(nameof(ToplamGelir));
-                }
-            }
-        }
-
-        [XmlAttribute(AttributeName = "Tarih")]
-        public DateTime Tarih
-        {
-            get => tarih;
-
-            set
-            {
-                if (tarih != value)
-                {
-                    tarih = value;
-                    OnPropertyChanged(nameof(Tarih));
                 }
             }
         }

@@ -43,8 +43,15 @@ namespace Hirdavatci
                 Malzemeler malzemeler = (Malzemeler)serializer.Deserialize(reader);
                 return malzemeler.Malzeme;
             }
-            Directory.CreateDirectory(Path.GetDirectoryName(xmldatapath));
+            _ = Directory.CreateDirectory(Path.GetDirectoryName(xmldatapath));
             return new ObservableCollection<Malzeme>();
+        }
+
+        public static void Serialize<T>(this T dataToSerialize)
+        {
+            XmlSerializer serializer = new(typeof(T));
+            using TextWriter stream = new StreamWriter(xmldatapath);
+            serializer.Serialize(stream, dataToSerialize);
         }
     }
 }

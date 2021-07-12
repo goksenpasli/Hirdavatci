@@ -18,6 +18,11 @@
         <Style TargetType="HeaderedContentControl">
             <Setter Property="IsTabStop" Value="False" />
         </Style>
+        <CollectionViewSource x:Key="Cvs" d:DesignSource="{d:DesignInstance Type=local:Satis, CreateList=True}" Source="{Binding ElementName=listView, Path=SelectedItem.Satislar}">
+            <CollectionViewSource.GroupDescriptions>
+                <PropertyGroupDescription PropertyName="Tarih" />
+            </CollectionViewSource.GroupDescriptions>
+        </CollectionViewSource>
     </Window.Resources>
     <Grid x:Name="grid">
         <Grid.ColumnDefinitions>
@@ -154,6 +159,37 @@
                                     Width="80"
                                     Extensions:GridViewSort.PropertyName="KalanAdet"
                                     DisplayMemberBinding="{Binding KalanAdet}" />
+                                <GridViewColumn Header="MALZEME&#x0a;EKLE">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Extensions:ContentToggleButton OverContent="MALZEME EKLE">
+                                                <Extensions:ContentToggleButton.Content>
+                                                    <GroupBox Header="DEPOYA YENİ MALZEME EKLE">
+                                                        <StackPanel>
+                                                            <HeaderedContentControl Header="EKLENECEK MALZEME ADETİ">
+                                                                <Extensions:NumericUpDownControl Maximum="{x:Static system:Double.MaxValue}"
+                                                                    Orientation="Horizontal" SmallChange="1"
+                                                                    Value="{Binding EklenenMalzemeAdeti, UpdateSourceTrigger=PropertyChanged}" />
+                                                            </HeaderedContentControl>
+                                                            <Button Content="MALZEME EKLE" Command="{Binding DataContext.DepoyaYeniMalzemeEkle, ElementName=grid}" CommandParameter="{Binding Mode=OneWay}" />
+                                                        </StackPanel>
+                                                    </GroupBox>
+                                                </Extensions:ContentToggleButton.Content>
+                                            </Extensions:ContentToggleButton>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
+                                <GridViewColumn Header="SİL">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <TextBlock>
+                                                <Hyperlink Command="{Binding DataContext.DepoyuSil, ElementName=grid}" CommandParameter="{Binding Mode=OneWay}">
+                                                    <Run Text="SİL" />
+                                                </Hyperlink>
+                                            </TextBlock>
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
                             </GridView>
                         </ListView.View>
                     </ListView>
@@ -203,14 +239,7 @@
                         </TabItem>
                         <TabItem Header="SATIŞLAR">
                             <Grid>
-                                <Grid.Resources>
-                                    <CollectionViewSource x:Key="Cvs" d:DesignSource="{d:DesignInstance Type=local:Satis, CreateList=True}" Source="{Binding ElementName=listView, Path=SelectedItem.Satislar}">
-                                        <CollectionViewSource.GroupDescriptions>
-                                            <PropertyGroupDescription PropertyName="Tarih" />
-                                        </CollectionViewSource.GroupDescriptions>
-                                    </CollectionViewSource>
-                                </Grid.Resources>
-                                <ListView ItemsSource="{Binding Mode=OneWay, Source={StaticResource Cvs}}" Extensions:GridViewSort.AutoSort="True">
+                                <ListView ItemsSource="{Binding Mode=OneWay, Source={StaticResource Cvs}}" Extensions:GridViewSort.AutoSort="True" VirtualizingPanel.IsVirtualizingWhenGrouping="True">
                                     <ListView.GroupStyle>
                                         <GroupStyle>
                                             <GroupStyle.ContainerStyle>

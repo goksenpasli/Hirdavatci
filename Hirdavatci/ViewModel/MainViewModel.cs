@@ -1,12 +1,10 @@
 ﻿using Extensions;
 using System;
 using System.ComponentModel;
-using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
-using System.Xml.Serialization;
 
 namespace Hirdavatci
 {
@@ -35,11 +33,28 @@ namespace Hirdavatci
                         KalanAdet = dc.ToplamAdet
                     };
                     Malzemeler.Malzeme.Add(malzeme);
-                    XmlSerializer serializer = new(typeof(Malzemeler));
-                    using TextWriter writer = new StreamWriter(ExtensionMethods.xmldatapath);
-                    serializer.Serialize(writer, Malzemeler);
+                    Malzemeler.Serialize();
                 }
             }, parameter => !string.IsNullOrWhiteSpace(Malzeme.Aciklama) && !string.IsNullOrWhiteSpace(Malzeme.Barkod) && Malzeme.BirimFiyat > 0 && Malzeme.ToplamAdet > 0);
+
+            DepoyuSil = new RelayCommand<object>(parameter =>
+            {
+                if (parameter is Malzeme dc && MessageBox.Show("Seçili malzemeyi silmek istiyor musun? Dikkat bu malzemeye ait satışlar da silinecektir.", "HIRDAVATÇI", MessageBoxButton.YesNo, MessageBoxImage.Exclamation, MessageBoxResult.No) == MessageBoxResult.Yes)
+                {
+                    Malzemeler.Malzeme.Remove(dc);
+                    Malzemeler.Serialize();
+                }
+            }, parameter => true);
+
+            DepoyaYeniMalzemeEkle = new RelayCommand<object>(parameter =>
+            {
+                if (parameter is Malzeme dc)
+                {
+                    dc.KalanAdet += dc.EklenenMalzemeAdeti;
+                    dc.ToplamAdet += dc.EklenenMalzemeAdeti;
+                    Malzemeler.Serialize();
+                }
+            }, parameter => parameter is Malzeme dc && dc.EklenenMalzemeAdeti > 0);
 
             KareKodYazdır = new RelayCommand<object>(parameter =>
             {
@@ -59,7 +74,7 @@ namespace Hirdavatci
                 {
                     if (Satis.SatisAdet > dc.KalanAdet)
                     {
-                        MessageBox.Show("Satış Adeti Kalan Adetten Fazla Olamaz.", "HIRDAVATÇI", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                        _ = MessageBox.Show("Satış Adeti Kalan Adetten Fazla Olamaz.", "HIRDAVATÇI", MessageBoxButton.OK, MessageBoxImage.Exclamation);
                         return;
                     }
                     Satis satis = new()
@@ -73,9 +88,7 @@ namespace Hirdavatci
 
                     dc.KalanAdet -= Satis.SatisAdet;
                     dc.Satislar.Add(satis);
-                    XmlSerializer serializer = new(typeof(Malzemeler));
-                    using TextWriter writer = new StreamWriter(ExtensionMethods.xmldatapath);
-                    serializer.Serialize(writer, Malzemeler);
+                    Malzemeler.Serialize();
                 }
             }, parameter => parameter is Malzeme malzeme && !string.IsNullOrWhiteSpace(Satis.SatinAlanKisi) && Satis.SatisAdet > 0 && Satis.SatisFiyat > 0);
 
@@ -83,6 +96,8 @@ namespace Hirdavatci
         }
 
         public ICommand DepoyaEkle { get; }
+
+        public ICommand DepoyuSil { get; }
 
         public ICommand KareKodYazdır { get; }
 
@@ -92,13 +107,22 @@ namespace Hirdavatci
 
         public ICommand SatışKaydıEkle { get; }
 
+        public ICommand DepoyaYeniMalzemeEkle { get; }
+
         public Satis Satis { get; set; }
 
         private void Malzeme_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName is "Barkod")
             {
-                Malzeme.BarkodImage = $"{Malzeme.Barkod}".GenerateBarCodeImage();
+                try
+                {
+                    Malzeme.BarkodImage = $"{Malzeme.Barkod}".GenerateBarCodeImage();
+                }
+                catch (Exception ex)
+                {
+                    _ = MessageBox.Show(ex.Message, "HIRDAVATÇI", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                }
             }
 
             if (e.PropertyName == "BarKodAramaMetni")
