@@ -8,6 +8,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
+using System.Windows.Media.Imaging;
 
 namespace Hirdavatci
 {
@@ -103,6 +104,27 @@ namespace Hirdavatci
                 }
             }, parameter => true);
 
+            KareKodSakla = new RelayCommand<object>(parameter =>
+            {
+                if (parameter is BitmapImage bitmapimage)
+                {
+                    SaveFileDialog saveFileDialog = new()
+                    {
+                        Title = "SAKLA",
+                        Filter = "Resim Dosyaları (*.png)|*.png",
+                    };
+
+                    if (saveFileDialog.ShowDialog() == true)
+                    {
+                        byte[] bytes = bitmapimage.ToTiffJpegByteArray(Extensions.ExtensionMethods.Format.Png);
+                        using FileStream imageFile = new(saveFileDialog.FileName, FileMode.Create);
+                        imageFile.Write(bytes, 0, bytes.Length);
+                        imageFile.Flush();
+                        bytes = null;
+                    }
+                }
+            }, parameter => true);
+
             SatışKaydıEkle = new RelayCommand<object>(parameter =>
             {
                 if (parameter is Malzeme dc)
@@ -132,20 +154,23 @@ namespace Hirdavatci
 
         public ICommand DepoyaEkle { get; }
 
+        public ICommand DepoyaYeniMalzemeEkle { get; }
+
         public ICommand DepoyuSil { get; }
+
+        public ICommand KareKodSakla { get; }
 
         public ICommand KareKodYazdır { get; }
 
         public Malzeme Malzeme { get; set; }
 
+        public ICommand MalzemeIadeEt { get; }
+
         public Malzemeler Malzemeler { get; set; }
 
-        public ICommand SatışKaydıEkle { get; }
-
-        public ICommand DepoyaYeniMalzemeEkle { get; }
-
         public ICommand MalzemeResimYükle { get; }
-        public ICommand MalzemeIadeEt { get; }
+
+        public ICommand SatışKaydıEkle { get; }
 
         public Satis Satis { get; set; }
 

@@ -76,7 +76,13 @@
                     </Button>
                     <Image x:Name="Img"
                         Width="175" Height="175"
-                        Source="{Binding Malzeme.BarkodImage}" />
+                        Source="{Binding Malzeme.BarkodImage}">
+                        <Image.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Header="RESİM OLARAK SAKLA" Command="{Binding KareKodSakla, Mode=OneWay}" CommandParameter="{Binding Malzeme.BarkodImage}" />
+                            </ContextMenu>
+                        </Image.ContextMenu>
+                    </Image>
                 </StackPanel>
                 <Button Grid.Row="2" Command="{Binding DepoyaEkle}" CommandParameter="{Binding Malzeme}">
                     <Button.Content>
