@@ -298,7 +298,7 @@
                                                 <GridViewColumn.CellTemplate>
                                                     <DataTemplate>
                                                         <StackPanel Orientation="Horizontal">
-                                                            <TextBox Text="{Binding IadeAciklama, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="50" ToolTip="Bir Açıklama Yazın." />
+                                                            <TextBox Text="{Binding Aciklama, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="50" ToolTip="Bir Açıklama Yazın." />
                                                             <Button Content="İADE ET" Command="{Binding DataContext.MalzemeIadeEt, ElementName=grid}">
                                                                 <Button.CommandParameter>
                                                                     <MultiBinding Converter="{StaticResource CloneConverter}">

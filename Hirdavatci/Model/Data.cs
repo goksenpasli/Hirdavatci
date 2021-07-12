@@ -276,7 +276,7 @@ namespace Hirdavatci
     [XmlRoot(ElementName = "Satis")]
     public class Satis : InpcBase
     {
-        private string ıadeAciklama;
+        private string aciklama;
 
         private ObservableCollection<Iadeler> ıadeler = new();
 
@@ -293,16 +293,16 @@ namespace Hirdavatci
         private double toplamGelir;
 
         [XmlIgnore]
-        public string IadeAciklama
+        public string Aciklama
         {
-            get => ıadeAciklama;
+            get => aciklama;
 
             set
             {
-                if (ıadeAciklama != value)
+                if (aciklama != value)
                 {
-                    ıadeAciklama = value;
-                    OnPropertyChanged(nameof(IadeAciklama));
+                    aciklama = value;
+                    OnPropertyChanged(nameof(Aciklama));
                 }
             }
         }

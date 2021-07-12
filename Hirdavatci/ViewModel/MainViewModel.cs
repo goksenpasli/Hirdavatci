@@ -40,7 +40,7 @@ namespace Hirdavatci
 
             DepoyuSil = new RelayCommand<object>(parameter =>
             {
-                if (parameter is Malzeme dc && MessageBox.Show("Seçili malzemeyi silmek istiyor musun? Dikkat bu malzemeye ait satışlar da silinecektir.", "HIRDAVATÇI", MessageBoxButton.YesNo, MessageBoxImage.Exclamation, MessageBoxResult.No) == MessageBoxResult.Yes)
+                if (parameter is Malzeme dc && MessageBox.Show("Seçili malzemeyi silmek istiyor musun? Dikkat bu malzemeye ait satışlar ve iadeler de silinecektir.", "HIRDAVATÇI", MessageBoxButton.YesNo, MessageBoxImage.Exclamation, MessageBoxResult.No) == MessageBoxResult.Yes)
                 {
                     Malzemeler.Malzeme.Remove(dc);
                     Malzemeler.Serialize();
@@ -55,14 +55,14 @@ namespace Hirdavatci
                     {
                         IadeTarihi = DateTime.Today,
                         IadeMiktari = (dc[0] as Satis)?.SatisAdet ?? 0,
-                        IadeAciklama = (dc[0] as Satis)?.IadeAciklama
+                        IadeAciklama = (dc[0] as Satis)?.Aciklama
                     };
 
                     (dc[0] as Satis)?.Iadeler.Add(ıadeler);
                     (dc[1] as Malzeme).KalanAdet += (dc[0] as Satis).SatisAdet;
                     Malzemeler.Serialize();
                 }
-            }, parameter => parameter is object[] dc && !string.IsNullOrWhiteSpace((dc[0] as Satis)?.IadeAciklama) && (dc[0] as Satis)?.Iadeler?.Any() == false);
+            }, parameter => parameter is object[] dc && !string.IsNullOrWhiteSpace((dc[0] as Satis)?.Aciklama) && (dc[0] as Satis)?.Iadeler?.Any() == false);
 
             DepoyaYeniMalzemeEkle = new RelayCommand<object>(parameter =>
             {
