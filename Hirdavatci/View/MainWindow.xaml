@@ -102,7 +102,9 @@
                     <RowDefinition />
                 </Grid.RowDefinitions>
                 <GroupBox Header="DEPO DURUMU" Grid.Row="0">
-                    <ListView x:Name="listView" ItemsSource="{Binding Malzemeler.Malzeme}" Extensions:GridViewSort.AutoSort="True">
+                    <ListView x:Name="listView"
+                        ItemsSource="{Binding Malzemeler.Malzeme}"
+                        Extensions:GridViewSort.AutoSort="True" VirtualizingPanel.VirtualizationMode="Recycling">
                         <ListView.ItemContainerStyle>
                             <Style TargetType="ListViewItem">
                                 <Style.Triggers>
@@ -117,7 +119,7 @@
                                 <GridViewColumn Header="RESİM" Width="64">
                                     <GridViewColumn.CellTemplate>
                                         <DataTemplate>
-                                            <Image Source="{Binding ResimYolu, Mode=OneWay, Converter={StaticResource DataImageFilePathImageUriConverter}}" />
+                                            <Image Source="{Binding ResimYolu, Mode=OneWay, IsAsync=True, Converter={StaticResource DataImageFilePathImageUriConverter}}" />
                                         </DataTemplate>
                                     </GridViewColumn.CellTemplate>
                                 </GridViewColumn>

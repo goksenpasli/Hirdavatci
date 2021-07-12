@@ -17,7 +17,8 @@ namespace Hirdavatci
                 BitmapImage image = new();
                 image.BeginInit();
                 image.DecodePixelHeight = 96;
-                image.CacheOption = BitmapCacheOption.None;
+                image.CacheOption = BitmapCacheOption.None;//onload to bypass file lock
+                image.CreateOptions = BitmapCreateOptions.IgnoreImageCache;
                 image.UriSource = new Uri($"{Path.GetDirectoryName(ExtensionMethods.xmldatapath)}\\{filename}");
                 image.EndInit();
                 if (!image.IsFrozen && image.CanFreeze)
