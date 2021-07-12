@@ -86,6 +86,7 @@ namespace Hirdavatci
         private ObservableCollection<Satis> satislar = new();
 
         private int toplamAdet;
+        private string resimYolu;
 
         [XmlAttribute(AttributeName = "Aciklama")]
         public string Aciklama
@@ -98,6 +99,21 @@ namespace Hirdavatci
                 {
                     aciklama = value;
                     OnPropertyChanged(nameof(Aciklama));
+                }
+            }
+        }
+
+        [XmlAttribute(AttributeName = "ResimYolu")]
+        public string ResimYolu
+        {
+            get => resimYolu;
+
+            set
+            {
+                if (resimYolu != value)
+                {
+                    resimYolu = value;
+                    OnPropertyChanged(nameof(ResimYolu));
                 }
             }
         }

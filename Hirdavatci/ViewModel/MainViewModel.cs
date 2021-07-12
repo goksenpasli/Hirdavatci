@@ -1,6 +1,8 @@
 ﻿using Extensions;
+using Microsoft.Win32;
 using System;
 using System.ComponentModel;
+using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -31,12 +33,27 @@ namespace Hirdavatci
                         BirimFiyat = dc.BirimFiyat,
                         Aciklama = dc.Aciklama,
                         Barkod = dc.Barkod,
-                        KalanAdet = dc.ToplamAdet
+                        KalanAdet = dc.ToplamAdet,
+                        ResimYolu = dc.ResimYolu
                     };
                     Malzemeler.Malzeme.Add(malzeme);
                     Malzemeler.Serialize();
                 }
             }, parameter => !string.IsNullOrWhiteSpace(Malzeme.Aciklama) && !string.IsNullOrWhiteSpace(Malzeme.Barkod) && Malzeme.BirimFiyat > 0 && Malzeme.ToplamAdet > 0);
+
+            MalzemeResimYükle = new RelayCommand<object>(parameter =>
+            {
+                if (parameter is Malzeme dc)
+                {
+                    OpenFileDialog openFileDialog = new() { Multiselect = false, Filter = "Resim Dosyaları (*.jpg;*.jpeg;*.tif;*.tiff;*.png)|*.jpg;*.jpeg;*.tif;*.tiff;*.png" };
+                    if (openFileDialog.ShowDialog() == true)
+                    {
+                        string filename = Guid.NewGuid() + Path.GetExtension(openFileDialog.FileName);
+                        File.Copy(openFileDialog.FileName, $"{Path.GetDirectoryName(ExtensionMethods.xmldatapath)}\\{filename}");
+                        dc.ResimYolu = filename;
+                    }
+                }
+            }, parameter => true);
 
             DepoyuSil = new RelayCommand<object>(parameter =>
             {
@@ -127,6 +144,7 @@ namespace Hirdavatci
 
         public ICommand DepoyaYeniMalzemeEkle { get; }
 
+        public ICommand MalzemeResimYükle { get; }
         public ICommand MalzemeIadeEt { get; }
 
         public Satis Satis { get; set; }

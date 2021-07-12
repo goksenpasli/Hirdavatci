@@ -15,6 +15,7 @@
         <Extensions:StringNullableToBooleanConverter x:Key="StringNullableToBooleanConverter" />
         <Extensions:SystemFileIconConverter x:Key="SystemFileIconConverter" />
         <local:BarcodeToImageConverter x:Key="BarcodeToImageConverter" />
+        <local:DataImageFilePathImageUriConverter x:Key="DataImageFilePathImageUriConverter" />
         <local:CloneConverter x:Key="CloneConverter" />
         <Style TargetType="HeaderedContentControl">
             <Setter Property="IsTabStop" Value="False" />
@@ -58,6 +59,7 @@
                     <HeaderedContentControl Header="MALZEME KOD">
                         <TextBox Text="{Binding Malzeme.Barkod, UpdateSourceTrigger=PropertyChanged}" />
                     </HeaderedContentControl>
+                    <Button Content="MALZEME RESMİ EKLE" Command="{Binding MalzemeResimYükle, Mode=OneWay}" CommandParameter="{Binding Malzeme}" />
                     <ComboBox ItemsSource="{Binding Mode=OneWay, Source={StaticResource Barcodes}}" SelectedItem="{Binding Malzeme.BarcodeFormat}" />
                     <Button IsEnabled="{Binding Source, Converter={StaticResource NullableToBooleanConverter}, ElementName=Img}" Command="{Binding KareKodYazdır}" CommandParameter="{Binding ElementName=Img}">
                         <StackPanel Orientation="Horizontal">
@@ -112,6 +114,13 @@
                         </ListView.ItemContainerStyle>
                         <ListView.View>
                             <GridView>
+                                <GridViewColumn Header="RESİM" Width="64">
+                                    <GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <Image Source="{Binding ResimYolu, Mode=OneWay, Converter={StaticResource DataImageFilePathImageUriConverter}}" />
+                                        </DataTemplate>
+                                    </GridViewColumn.CellTemplate>
+                                </GridViewColumn>
                                 <GridViewColumn Header="MALZEME&#x0a;ADI"
                                     Width="200"
                                     Extensions:GridViewSort.PropertyName="Aciklama"
