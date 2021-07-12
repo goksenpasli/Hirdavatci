@@ -1,11 +1,11 @@
 ﻿using Extensions;
 using System;
 using System.ComponentModel;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
-using ZXing;
 
 namespace Hirdavatci
 {
@@ -46,6 +46,23 @@ namespace Hirdavatci
                     Malzemeler.Serialize();
                 }
             }, parameter => true);
+
+            MalzemeIadeEt = new RelayCommand<object>(parameter =>
+            {
+                if (parameter is object[] dc && MessageBox.Show("Seçili malzemeyi iade etmek istiyor musun?", "HIRDAVATÇI", MessageBoxButton.YesNo, MessageBoxImage.Exclamation, MessageBoxResult.No) == MessageBoxResult.Yes)
+                {
+                    Iadeler ıadeler = new()
+                    {
+                        IadeTarihi = DateTime.Today,
+                        IadeMiktari = (dc[0] as Satis)?.SatisAdet ?? 0,
+                        IadeAciklama = (dc[0] as Satis)?.IadeAciklama
+                    };
+
+                    (dc[0] as Satis)?.Iadeler.Add(ıadeler);
+                    (dc[1] as Malzeme).KalanAdet += (dc[0] as Satis).SatisAdet;
+                    Malzemeler.Serialize();
+                }
+            }, parameter => parameter is object[] dc && !string.IsNullOrWhiteSpace((dc[0] as Satis)?.IadeAciklama) && (dc[0] as Satis)?.Iadeler?.Any() == false);
 
             DepoyaYeniMalzemeEkle = new RelayCommand<object>(parameter =>
             {
@@ -109,6 +126,8 @@ namespace Hirdavatci
         public ICommand SatışKaydıEkle { get; }
 
         public ICommand DepoyaYeniMalzemeEkle { get; }
+
+        public ICommand MalzemeIadeEt { get; }
 
         public Satis Satis { get; set; }
 

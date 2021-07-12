@@ -15,6 +15,7 @@
         <Extensions:StringNullableToBooleanConverter x:Key="StringNullableToBooleanConverter" />
         <Extensions:SystemFileIconConverter x:Key="SystemFileIconConverter" />
         <local:BarcodeToImageConverter x:Key="BarcodeToImageConverter" />
+        <local:CloneConverter x:Key="CloneConverter" />
         <Style TargetType="HeaderedContentControl">
             <Setter Property="IsTabStop" Value="False" />
         </Style>
@@ -245,7 +246,9 @@
                         </TabItem>
                         <TabItem Header="SATIŞLAR">
                             <Grid>
-                                <ListView ItemsSource="{Binding Mode=OneWay, Source={StaticResource Cvs}}" Extensions:GridViewSort.AutoSort="True" VirtualizingPanel.IsVirtualizingWhenGrouping="True">
+                                <ListView x:Name="LvSatislar"
+                                    ItemsSource="{Binding Mode=OneWay, Source={StaticResource Cvs}}"
+                                    Extensions:GridViewSort.AutoSort="True" VirtualizingPanel.IsVirtualizingWhenGrouping="True">
                                     <ListView.GroupStyle>
                                         <GroupStyle>
                                             <GroupStyle.ContainerStyle>
@@ -291,6 +294,42 @@
                                                 Width="80"
                                                 Extensions:GridViewSort.PropertyName="Tarih"
                                                 DisplayMemberBinding="{Binding Tarih, StringFormat=\{0:d\}}" />
+                                            <GridViewColumn Header="İADE" Width="120">
+                                                <GridViewColumn.CellTemplate>
+                                                    <DataTemplate>
+                                                        <StackPanel Orientation="Horizontal">
+                                                            <TextBox Text="{Binding IadeAciklama, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="50" ToolTip="Bir Açıklama Yazın." />
+                                                            <Button Content="İADE ET" Command="{Binding DataContext.MalzemeIadeEt, ElementName=grid}">
+                                                                <Button.CommandParameter>
+                                                                    <MultiBinding Converter="{StaticResource CloneConverter}">
+                                                                        <Binding Mode="OneWay" />
+                                                                        <Binding ElementName="listView" Mode="OneWay" Path="SelectedItem" />
+                                                                    </MultiBinding>
+                                                                </Button.CommandParameter>
+                                                            </Button>
+                                                        </StackPanel>
+                                                    </DataTemplate>
+                                                </GridViewColumn.CellTemplate>
+                                            </GridViewColumn>
+                                        </GridView>
+                                    </ListView.View>
+                                </ListView>
+                            </Grid>
+                        </TabItem>
+                        <TabItem Header="İADELER">
+                            <Grid>
+                                <ListView ItemsSource="{Binding SelectedItem.Iadeler, ElementName=LvSatislar}" Extensions:GridViewSort.AutoSort="True">
+                                    <ListView.View>
+                                        <GridView>
+                                            <GridViewColumn Header="İADE&#x0a;MİKTARI" Extensions:GridViewSort.PropertyName="IadeMiktari" DisplayMemberBinding="{Binding IadeMiktari}" />
+                                            <GridViewColumn Header="İADE&#x0a;TARİHİ"
+                                                Width="80"
+                                                Extensions:GridViewSort.PropertyName="IadeTarihi"
+                                                DisplayMemberBinding="{Binding IadeTarihi, StringFormat=\{0:d\}}" />
+                                            <GridViewColumn Header="İADE&#x0a;NOTU"
+                                                Width="250"
+                                                Extensions:GridViewSort.PropertyName="IadeAciklama"
+                                                DisplayMemberBinding="{Binding IadeAciklama}" />
                                         </GridView>
                                     </ListView.View>
                                 </ListView>

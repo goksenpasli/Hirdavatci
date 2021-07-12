@@ -7,6 +7,61 @@ using ZXing;
 
 namespace Hirdavatci
 {
+    [XmlRoot(ElementName = "Iadeler")]
+    public class Iadeler : InpcBase
+    {
+        private string ıadeAciklama;
+
+        private int ıadeMiktari;
+
+        private DateTime ıadeTarihi;
+
+        [XmlAttribute(AttributeName = "IadeAciklama")]
+        public string IadeAciklama
+        {
+            get => ıadeAciklama;
+
+            set
+            {
+                if (ıadeAciklama != value)
+                {
+                    ıadeAciklama = value;
+                    OnPropertyChanged(nameof(IadeAciklama));
+                }
+            }
+        }
+
+        [XmlAttribute(AttributeName = "IadeMiktari")]
+        public int IadeMiktari
+        {
+            get => ıadeMiktari;
+
+            set
+            {
+                if (ıadeMiktari != value)
+                {
+                    ıadeMiktari = value;
+                    OnPropertyChanged(nameof(IadeMiktari));
+                }
+            }
+        }
+
+        [XmlAttribute(AttributeName = "IadeTarihi")]
+        public DateTime IadeTarihi
+        {
+            get => ıadeTarihi;
+
+            set
+            {
+                if (ıadeTarihi != value)
+                {
+                    ıadeTarihi = value;
+                    OnPropertyChanged(nameof(IadeTarihi));
+                }
+            }
+        }
+    }
+
     [XmlRoot(ElementName = "Malzeme")]
     public class Malzeme : InpcBase
     {
@@ -221,6 +276,10 @@ namespace Hirdavatci
     [XmlRoot(ElementName = "Satis")]
     public class Satis : InpcBase
     {
+        private string ıadeAciklama;
+
+        private ObservableCollection<Iadeler> ıadeler = new();
+
         private int ıd;
 
         private string satinAlanKisi;
@@ -232,6 +291,36 @@ namespace Hirdavatci
         private DateTime tarih = DateTime.Today;
 
         private double toplamGelir;
+
+        [XmlIgnore]
+        public string IadeAciklama
+        {
+            get => ıadeAciklama;
+
+            set
+            {
+                if (ıadeAciklama != value)
+                {
+                    ıadeAciklama = value;
+                    OnPropertyChanged(nameof(IadeAciklama));
+                }
+            }
+        }
+
+        [XmlElement(ElementName = "Iadeler")]
+        public ObservableCollection<Iadeler> Iadeler
+        {
+            get => ıadeler;
+
+            set
+            {
+                if (ıadeler != value)
+                {
+                    ıadeler = value;
+                    OnPropertyChanged(nameof(Iadeler));
+                }
+            }
+        }
 
         [XmlAttribute(AttributeName = "Id")]
         public int Id
@@ -331,7 +420,21 @@ namespace Hirdavatci
     [XmlRoot(ElementName = "Satislar")]
     public class Satislar : InpcBase
     {
+        private Satis satis;
+
         [XmlElement(ElementName = "Satis")]
-        public Satis Satis { get; set; }
+        public Satis Satis
+        {
+            get => satis;
+
+            set
+            {
+                if (satis != value)
+                {
+                    satis = value;
+                    OnPropertyChanged(nameof(Satis));
+                }
+            }
+        }
     }
 }
