@@ -4,7 +4,6 @@ using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -15,7 +14,7 @@ namespace Hirdavatci
 {
     public class MainViewModel
     {
-        private static readonly CollectionViewSource CvsMalzemeler = (CollectionViewSource)Application.Current?.MainWindow?.TryFindResource("CvsMalzemeler");
+        private readonly CollectionViewSource CvsMalzemeler = (CollectionViewSource)Application.Current?.MainWindow?.TryFindResource("CvsMalzemeler");
 
         public MainViewModel()
         {
@@ -63,7 +62,7 @@ namespace Hirdavatci
             {
                 if (parameter is Malzeme dc && MessageBox.Show("Seçili malzemeyi silmek istiyor musun? Dikkat bu malzemeye ait satışlar ve iadeler de silinecektir.", "HIRDAVATÇI", MessageBoxButton.YesNo, MessageBoxImage.Exclamation, MessageBoxResult.No) == MessageBoxResult.Yes)
                 {
-                    Malzemeler.Malzeme.Remove(dc);
+                    _ = Malzemeler.Malzeme.Remove(dc);
                     Malzemeler.Serialize();
                 }
             }, parameter => true);
@@ -78,12 +77,12 @@ namespace Hirdavatci
                         IadeMiktari = (dc[0] as Satis)?.SatisAdet ?? 0,
                         IadeAciklama = (dc[0] as Satis)?.Aciklama
                     };
-
+                    (dc[0] as Satis).IadeEdildiMi = true;
                     (dc[0] as Satis)?.Iadeler.Add(ıadeler);
                     (dc[1] as Malzeme).KalanAdet += (dc[0] as Satis).SatisAdet;
                     Malzemeler.Serialize();
                 }
-            }, parameter => parameter is object[] dc && !string.IsNullOrWhiteSpace((dc[0] as Satis)?.Aciklama) && (dc[0] as Satis)?.Iadeler?.Any() == false);
+            }, parameter => parameter is object[] dc && !string.IsNullOrWhiteSpace((dc[0] as Satis)?.Aciklama) && (dc[0] as Satis)?.IadeEdildiMi == false);
 
             DepoyaYeniMalzemeEkle = new RelayCommand<object>(parameter =>
             {
@@ -156,7 +155,7 @@ namespace Hirdavatci
             {
                 if (parameter is string filename)
                 {
-                    Process.Start($"{Path.GetDirectoryName(ExtensionMethods.xmldatapath)}\\{filename}");
+                    _ = Process.Start($"{Path.GetDirectoryName(ExtensionMethods.xmldatapath)}\\{filename}");
                 }
             }, parameter => true);
 

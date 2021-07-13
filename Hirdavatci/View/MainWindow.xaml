@@ -328,6 +328,15 @@
                                             </GroupStyle.ContainerStyle>
                                         </GroupStyle>
                                     </ListView.GroupStyle>
+                                    <ListView.ItemContainerStyle>
+                                        <Style TargetType="ListViewItem">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IadeEdildiMi}" Value="true">
+                                                    <Setter Property="Background" Value="Gray" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </ListView.ItemContainerStyle>
                                     <ListView.View>
                                         <GridView>
                                             <GridViewColumn Header="SATIN ALAN&#x0a;KİŞİ"
@@ -351,6 +360,14 @@
                                                 Extensions:GridViewSort.PropertyName="Tarih"
                                                 DisplayMemberBinding="{Binding Tarih, StringFormat=\{0:d\}}" />
                                             <GridViewColumn Header="İADE" Width="120">
+                                                <GridViewColumn.HeaderTemplate>
+                                                    <DataTemplate>
+                                                        <StackPanel Orientation="Horizontal">
+                                                            <Rectangle Width="20" Height="20" Fill="Gray" />
+                                                            <TextBlock Text="İADE EDİLMİŞ" VerticalAlignment="Center" />
+                                                        </StackPanel>
+                                                    </DataTemplate>
+                                                </GridViewColumn.HeaderTemplate>
                                                 <GridViewColumn.CellTemplate>
                                                     <DataTemplate>
                                                         <StackPanel Orientation="Horizontal">

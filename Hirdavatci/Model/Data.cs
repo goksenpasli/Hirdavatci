@@ -313,6 +313,8 @@ namespace Hirdavatci
     {
         private string aciklama;
 
+        private bool ıadeEdildiMi;
+
         private ObservableCollection<Iadeler> ıadeler = new();
 
         private int ıd;
@@ -338,6 +340,21 @@ namespace Hirdavatci
                 {
                     aciklama = value;
                     OnPropertyChanged(nameof(Aciklama));
+                }
+            }
+        }
+
+        [XmlAttribute(AttributeName = "IadeEdildiMi")]
+        public bool IadeEdildiMi
+        {
+            get => ıadeEdildiMi;
+
+            set
+            {
+                if (ıadeEdildiMi != value)
+                {
+                    ıadeEdildiMi = value;
+                    OnPropertyChanged(nameof(IadeEdildiMi));
                 }
             }
         }
