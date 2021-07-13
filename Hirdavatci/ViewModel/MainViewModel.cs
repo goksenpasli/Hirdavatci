@@ -2,6 +2,7 @@
 using Microsoft.Win32;
 using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows;
@@ -14,6 +15,8 @@ namespace Hirdavatci
 {
     public class MainViewModel
     {
+        private static readonly CollectionViewSource CvsMalzemeler = (CollectionViewSource)Application.Current?.MainWindow?.TryFindResource("CvsMalzemeler");
+
         public MainViewModel()
         {
             Malzeme = new Malzeme();
@@ -149,6 +152,14 @@ namespace Hirdavatci
                 }
             }, parameter => parameter is Malzeme malzeme && !string.IsNullOrWhiteSpace(Satis.SatinAlanKisi) && Satis.SatisAdet > 0 && Satis.SatisFiyat > 0);
 
+            DosyaÇalıştır = new RelayCommand<object>(parameter =>
+            {
+                if (parameter is string filename)
+                {
+                    Process.Start($"{Path.GetDirectoryName(ExtensionMethods.xmldatapath)}\\{filename}");
+                }
+            }, parameter => true);
+
             Malzeme.PropertyChanged += Malzeme_PropertyChanged;
         }
 
@@ -157,6 +168,8 @@ namespace Hirdavatci
         public ICommand DepoyaYeniMalzemeEkle { get; }
 
         public ICommand DepoyuSil { get; }
+
+        public ICommand DosyaÇalıştır { get; }
 
         public ICommand KareKodSakla { get; }
 
@@ -190,7 +203,22 @@ namespace Hirdavatci
 
             if (e.PropertyName == "BarKodAramaMetni")
             {
-                CollectionViewSource.GetDefaultView(Malzemeler.Malzeme).Filter = item => item is Malzeme malzeme && malzeme.Barkod.Contains(Malzeme.BarKodAramaMetni);
+                CvsMalzemeler.Filter += (s, e) => e.Accepted = e.Item is Malzeme malzeme && malzeme.Barkod.Contains(Malzeme.BarKodAramaMetni);
+            }
+
+            if (e.PropertyName == "FiyatAramaMetni")
+            {
+                CvsMalzemeler.Filter += (s, e) =>
+                {
+                    if (!string.IsNullOrEmpty(Malzeme.FiyatAramaMetni))
+                    {
+                        e.Accepted = e.Item is Malzeme malzeme && malzeme.BirimFiyat.ToString() == Malzeme.FiyatAramaMetni;
+                    }
+                    else
+                    {
+                        CvsMalzemeler.View.Filter = null;
+                    }
+                };
             }
         }
     }

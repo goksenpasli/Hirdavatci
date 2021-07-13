@@ -25,6 +25,7 @@
                 <PropertyGroupDescription PropertyName="Tarih" />
             </CollectionViewSource.GroupDescriptions>
         </CollectionViewSource>
+        <CollectionViewSource x:Key="CvsMalzemeler" d:DesignSource="{d:DesignInstance Type=local:Malzeme, CreateList=True}" Source="{Binding Malzemeler.Malzeme}" />
         <ObjectDataProvider x:Key="Barcodes" MethodName="GetValues" ObjectType="{x:Type system:Enum}">
             <ObjectDataProvider.MethodParameters>
                 <x:Type TypeName="zxing:BarcodeFormat" />
@@ -59,7 +60,21 @@
                     <HeaderedContentControl Header="MALZEME KOD">
                         <TextBox Text="{Binding Malzeme.Barkod, UpdateSourceTrigger=PropertyChanged}" />
                     </HeaderedContentControl>
-                    <Button Content="MALZEME RESMİ EKLE" Command="{Binding MalzemeResimYükle, Mode=OneWay}" CommandParameter="{Binding Malzeme}" />
+                    <Button Command="{Binding MalzemeResimYükle, Mode=OneWay}" CommandParameter="{Binding Malzeme}">
+                        <Button.Content>
+                            <StackPanel Orientation="Horizontal">
+                                <Image Width="32" Height="32">
+                                    <Image.Source>
+                                        <MultiBinding Converter="{StaticResource SystemFileIconConverter}">
+                                            <Binding Source="Shell32.dll" />
+                                            <Binding Source="139" />
+                                        </MultiBinding>
+                                    </Image.Source>
+                                </Image>
+                                <TextBlock Text="MALZEME RESMİ EKLE" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Button.Content>
+                    </Button>
                     <ComboBox ItemsSource="{Binding Mode=OneWay, Source={StaticResource Barcodes}}" SelectedItem="{Binding Malzeme.BarcodeFormat}" />
                     <Button IsEnabled="{Binding Source, Converter={StaticResource NullableToBooleanConverter}, ElementName=Img}" Command="{Binding KareKodYazdır}" CommandParameter="{Binding ElementName=Img}">
                         <StackPanel Orientation="Horizontal">
@@ -109,7 +124,7 @@
                 </Grid.RowDefinitions>
                 <GroupBox Header="DEPO DURUMU" Grid.Row="0">
                     <ListView x:Name="listView"
-                        ItemsSource="{Binding Malzemeler.Malzeme}"
+                        ItemsSource="{Binding Mode=OneWay, Source={StaticResource CvsMalzemeler}}"
                         Extensions:GridViewSort.AutoSort="True" VirtualizingPanel.VirtualizationMode="Recycling">
                         <ListView.ItemContainerStyle>
                             <Style TargetType="ListViewItem">
@@ -125,7 +140,11 @@
                                 <GridViewColumn Header="RESİM" Width="64">
                                     <GridViewColumn.CellTemplate>
                                         <DataTemplate>
-                                            <Image Source="{Binding ResimYolu, Mode=OneWay, IsAsync=True, Converter={StaticResource DataImageFilePathImageUriConverter}}" />
+                                            <Image Cursor="Hand" Source="{Binding ResimYolu, Mode=OneWay, IsAsync=True, Converter={StaticResource DataImageFilePathImageUriConverter}}">
+                                                <Image.InputBindings>
+                                                    <MouseBinding Command="{Binding DataContext.DosyaÇalıştır, ElementName=grid}" CommandParameter="{Binding ResimYolu, Mode=OneWay}" MouseAction="LeftClick" />
+                                                </Image.InputBindings>
+                                            </Image>
                                         </DataTemplate>
                                     </GridViewColumn.CellTemplate>
                                 </GridViewColumn>
@@ -172,9 +191,29 @@
                                     </GridViewColumn.CellTemplate>
                                 </GridViewColumn>
                                 <GridViewColumn Header="BİRİM&#x0a;FİYAT"
-                                    Width="80"
+                                    Width="120"
                                     Extensions:GridViewSort.PropertyName="BirimFiyat"
-                                    DisplayMemberBinding="{Binding BirimFiyat, StringFormat=\{0:C\}}" />
+                                    DisplayMemberBinding="{Binding BirimFiyat, StringFormat=\{0:C\}}">
+                                    <GridViewColumn.HeaderTemplate>
+                                        <DataTemplate>
+                                            <UniformGrid Columns="2">
+                                                <TextBox Text="{Binding DataContext.Malzeme.FiyatAramaMetni, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, RelativeSource={RelativeSource AncestorType=ListView}}" Width="40" VerticalContentAlignment="Center">
+                                                    <TextBox.Style>
+                                                        <Style TargetType="TextBox">
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding DataContext.Malzeme.FiyatAramaMetni, Converter={StaticResource StringNullableToBooleanConverter}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, RelativeSource={RelativeSource AncestorType=ListView}}" Value="true">
+                                                                    <Setter Property="BorderBrush" Value="Green" />
+                                                                    <Setter Property="BorderThickness" Value="2" />
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </TextBox.Style>
+                                                </TextBox>
+                                                <TextBlock Text="MALZEME&#x0a;FİYAT" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                            </UniformGrid>
+                                        </DataTemplate>
+                                    </GridViewColumn.HeaderTemplate>
+                                </GridViewColumn>
                                 <GridViewColumn Header="TOPLAM&#x0a;ADET"
                                     Width="80"
                                     Extensions:GridViewSort.PropertyName="ToplamAdet"

@@ -79,14 +79,17 @@ namespace Hirdavatci
 
         private int eklenenMalzemeAdeti;
 
+        private string fiyatAramaMetni;
+
         private int ıd;
 
         private int kalanAdet;
 
+        private string resimYolu;
+
         private ObservableCollection<Satis> satislar = new();
 
         private int toplamAdet;
-        private string resimYolu;
 
         [XmlAttribute(AttributeName = "Aciklama")]
         public string Aciklama
@@ -99,21 +102,6 @@ namespace Hirdavatci
                 {
                     aciklama = value;
                     OnPropertyChanged(nameof(Aciklama));
-                }
-            }
-        }
-
-        [XmlAttribute(AttributeName = "ResimYolu")]
-        public string ResimYolu
-        {
-            get => resimYolu;
-
-            set
-            {
-                if (resimYolu != value)
-                {
-                    resimYolu = value;
-                    OnPropertyChanged(nameof(ResimYolu));
                 }
             }
         }
@@ -148,6 +136,7 @@ namespace Hirdavatci
             }
         }
 
+        [XmlIgnore]
         public string BarKodAramaMetni
         {
             get => barKodAra;
@@ -207,6 +196,21 @@ namespace Hirdavatci
             }
         }
 
+        [XmlIgnore]
+        public string FiyatAramaMetni
+        {
+            get => fiyatAramaMetni;
+
+            set
+            {
+                if (fiyatAramaMetni != value)
+                {
+                    fiyatAramaMetni = value;
+                    OnPropertyChanged(nameof(FiyatAramaMetni));
+                }
+            }
+        }
+
         [XmlAttribute(AttributeName = "Id")]
         public int Id
         {
@@ -233,6 +237,21 @@ namespace Hirdavatci
                 {
                     kalanAdet = value;
                     OnPropertyChanged(nameof(KalanAdet));
+                }
+            }
+        }
+
+        [XmlAttribute(AttributeName = "ResimYolu")]
+        public string ResimYolu
+        {
+            get => resimYolu;
+
+            set
+            {
+                if (resimYolu != value)
+                {
+                    resimYolu = value;
+                    OnPropertyChanged(nameof(ResimYolu));
                 }
             }
         }
