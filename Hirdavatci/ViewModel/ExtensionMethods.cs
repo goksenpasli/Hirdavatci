@@ -1,4 +1,7 @@
 ﻿using Extensions;
+using SharpCompress.Common;
+using SharpCompress.Writers;
+using SharpCompress.Writers.Zip;
 using System.Collections.ObjectModel;
 using System.Configuration;
 using System.Drawing.Imaging;
@@ -12,6 +15,16 @@ namespace Hirdavatci
     public static class ExtensionMethods
     {
         public static readonly string xmldatapath = Path.GetDirectoryName(ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.PerUserRoamingAndLocal).FilePath) + @"\Data.xml";
+
+        public static void Compress(this CompressorViewModel compressorViewModel)
+        {
+            using FileStream stream = File.OpenWrite(compressorViewModel.CompressorView.KayıtYolu);
+            using ZipWriter writer = new(stream, new ZipWriterOptions(CompressionType.Deflate) { UseZip64 = true, DeflateCompressionLevel = (SharpCompress.Compressors.Deflate.CompressionLevel)compressorViewModel.CompressorView.SıkıştırmaDerecesi });
+            foreach (string dosya in compressorViewModel.CompressorView.Dosyalar)
+            {
+                writer.Write(Path.GetFileName(dosya), dosya);
+            }
+        }
 
         public static BitmapImage GenerateBarCodeImage(this string Barkod, BarcodeFormat format = BarcodeFormat.QR_CODE)
         {

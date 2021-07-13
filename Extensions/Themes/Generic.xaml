@@ -762,6 +762,7 @@
                     Grid.Row="0" Grid.Column="1"
                     IsReadOnly="{Binding IsReadOnly, RelativeSource={RelativeSource TemplatedParent}}"
                     MinWidth="18" MinHeight="18"
+                    Background="{TemplateBinding Background}"
                     BorderThickness="0"
                     VerticalContentAlignment="Center" />
                 <RepeatButton x:Name="PART_LineUpButton"
@@ -824,6 +825,7 @@
                     Grid.Row="0" Grid.Column="0" Grid.RowSpan="2"
                     IsReadOnly="{Binding IsReadOnly, RelativeSource={RelativeSource TemplatedParent}}"
                     MinWidth="18" MinHeight="18"
+                    Background="{TemplateBinding Background}"
                     BorderThickness="0"
                     VerticalContentAlignment="Center" />
                 <RepeatButton x:Name="PART_LineUpButton"

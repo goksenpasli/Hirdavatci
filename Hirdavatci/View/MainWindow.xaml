@@ -17,15 +17,15 @@
         <local:BarcodeToImageConverter x:Key="BarcodeToImageConverter" />
         <local:DataImageFilePathImageUriConverter x:Key="DataImageFilePathImageUriConverter" />
         <local:CloneConverter x:Key="CloneConverter" />
-        <Style TargetType="HeaderedContentControl">
+        <Style TargetType="{x:Type HeaderedContentControl}">
             <Setter Property="IsTabStop" Value="False" />
         </Style>
-        <CollectionViewSource x:Key="Cvs" d:DesignSource="{d:DesignInstance Type=local:Satis, CreateList=True}" Source="{Binding ElementName=listView, Path=SelectedItem.Satislar}">
+        <CollectionViewSource x:Key="Cvs" d:DesignSource="{d:DesignInstance CreateList=True, Type={x:Type local:Satis}}" Source="{Binding SelectedItem.Satislar, ElementName=listView}">
             <CollectionViewSource.GroupDescriptions>
                 <PropertyGroupDescription PropertyName="Tarih" />
             </CollectionViewSource.GroupDescriptions>
         </CollectionViewSource>
-        <CollectionViewSource x:Key="CvsMalzemeler" d:DesignSource="{d:DesignInstance Type=local:Malzeme, CreateList=True}" Source="{Binding Malzemeler.Malzeme}" />
+        <CollectionViewSource x:Key="CvsMalzemeler" d:DesignSource="{d:DesignInstance CreateList=True, Type={x:Type local:Malzeme}}" Source="{Binding Malzemeler.Malzeme}" />
         <ObjectDataProvider x:Key="Barcodes" MethodName="GetValues" ObjectType="{x:Type system:Enum}">
             <ObjectDataProvider.MethodParameters>
                 <x:Type TypeName="zxing:BarcodeFormat" />
@@ -99,21 +99,38 @@
                         </Image.ContextMenu>
                     </Image>
                 </StackPanel>
-                <Button Grid.Row="2" Command="{Binding DepoyaEkle}" CommandParameter="{Binding Malzeme}">
-                    <Button.Content>
-                        <StackPanel Orientation="Horizontal">
-                            <Image Width="32" Height="32">
-                                <Image.Source>
-                                    <MultiBinding Converter="{StaticResource SystemFileIconConverter}">
-                                        <Binding Source="Shell32.dll" />
-                                        <Binding Source="137" />
-                                    </MultiBinding>
-                                </Image.Source>
-                            </Image>
-                            <TextBlock Text="MALZEME GİRİŞİ YAP" VerticalAlignment="Center" />
-                        </StackPanel>
-                    </Button.Content>
-                </Button>
+                <StackPanel Grid.Row="2">
+                    <Button Command="{Binding DepoyaEkle}" CommandParameter="{Binding Malzeme}">
+                        <Button.Content>
+                            <StackPanel Orientation="Horizontal">
+                                <Image Width="32" Height="32">
+                                    <Image.Source>
+                                        <MultiBinding Converter="{StaticResource SystemFileIconConverter}">
+                                            <Binding Source="Shell32.dll" />
+                                            <Binding Source="137" />
+                                        </MultiBinding>
+                                    </Image.Source>
+                                </Image>
+                                <TextBlock Text="MALZEME GİRİŞİ YAP" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Button.Content>
+                    </Button>
+                    <Button Command="{Binding VerileriYedekle}" IsTabStop="False">
+                        <Button.Content>
+                            <StackPanel Orientation="Horizontal">
+                                <Image Width="32" Height="32">
+                                    <Image.Source>
+                                        <MultiBinding Converter="{StaticResource SystemFileIconConverter}">
+                                            <Binding Source="Shell32.dll" />
+                                            <Binding Source="121" />
+                                        </MultiBinding>
+                                    </Image.Source>
+                                </Image>
+                                <TextBlock Text="VERİLERİ YEDEKLE (RESİMLER HARİÇ)" VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Button.Content>
+                    </Button>
+                </StackPanel>
             </Grid>
         </GroupBox>
         <GroupBox Header="DEPO" Grid.Column="1">
@@ -225,7 +242,13 @@
                                 <GridViewColumn Header="MALZEME&#x0a;EKLE">
                                     <GridViewColumn.CellTemplate>
                                         <DataTemplate>
-                                            <Extensions:ContentToggleButton OverContent="MALZEME EKLE">
+                                            <Extensions:ContentToggleButton BorderBrush="{x:Null}">
+                                                <Extensions:ContentToggleButton.OverContent>
+                                                    <Grid>
+                                                        <ProgressBar Style="{Binding Mode=OneWay, Source={StaticResource ProgressBarStyle}}" Maximum="{Binding ToplamAdet}" Value="{Binding KalanAdet}" />
+                                                        <TextBlock Text="MALZEME EKLE" Margin="1" />
+                                                    </Grid>
+                                                </Extensions:ContentToggleButton.OverContent>
                                                 <Extensions:ContentToggleButton.Content>
                                                     <GroupBox Header="DEPOYA YENİ MALZEME EKLE">
                                                         <StackPanel>

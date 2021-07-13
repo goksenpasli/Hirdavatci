@@ -159,6 +159,23 @@ namespace Hirdavatci
                 }
             }, parameter => true);
 
+            VerileriYedekle = new RelayCommand<object>(parameter =>
+            {
+                SaveFileDialog saveFileDialog = new()
+                {
+                    Title = "SAKLA",
+                    Filter = "Zip Dosyası (*.zip)|*.zip",
+                };
+                if (saveFileDialog.ShowDialog() == true)
+                {
+                    CompressorViewModel compressorViewModel = new();
+                    compressorViewModel.CompressorView.Dosyalar = new();
+                    compressorViewModel.CompressorView.KayıtYolu = saveFileDialog.FileName;
+                    compressorViewModel.CompressorView.Dosyalar.Add(ExtensionMethods.xmldatapath);
+                    compressorViewModel.Compress();
+                }
+            }, parameter => true);
+
             Malzeme.PropertyChanged += Malzeme_PropertyChanged;
         }
 
@@ -185,6 +202,8 @@ namespace Hirdavatci
         public ICommand SatışKaydıEkle { get; }
 
         public Satis Satis { get; set; }
+
+        public ICommand VerileriYedekle { get; }
 
         private void Malzeme_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
