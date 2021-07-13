@@ -166,7 +166,7 @@ namespace Hirdavatci
                     Title = "SAKLA",
                     Filter = "Zip Dosyası (*.zip)|*.zip",
                 };
-                if (saveFileDialog.ShowDialog() == true)
+                if (saveFileDialog.ShowDialog() == true && File.Exists(ExtensionMethods.xmldatapath))
                 {
                     CompressorViewModel compressorViewModel = new();
                     compressorViewModel.CompressorView.Dosyalar = new();
