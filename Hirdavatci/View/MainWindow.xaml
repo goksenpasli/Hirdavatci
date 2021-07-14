@@ -157,10 +157,10 @@
                         </ListView.ItemContainerStyle>
                         <ListView.View>
                             <GridView>
-                                <GridViewColumn Header="RESİM" Width="64">
+                                <GridViewColumn Header="RESİM" Width="40">
                                     <GridViewColumn.CellTemplate>
                                         <DataTemplate>
-                                            <Image Cursor="Hand" Source="{Binding ResimYolu, Mode=OneWay, IsAsync=True, Converter={StaticResource DataImageFilePathImageUriConverter}}">
+                                            <Image Cursor="Hand" Source="{Binding ResimYolu, Mode=OneWay, IsAsync=True, ConverterParameter='48', Converter={StaticResource DataImageFilePathImageUriConverter}}">
                                                 <Image.InputBindings>
                                                     <MouseBinding Command="{Binding DataContext.DosyaÇalıştır, ElementName=grid}" CommandParameter="{Binding ResimYolu, Mode=OneWay}" MouseAction="LeftClick" />
                                                 </Image.InputBindings>
@@ -308,33 +308,45 @@
                     <TabControl>
                         <TabItem Header="SATIŞ EKLE">
                             <Grid IsEnabled="{Binding ElementName=listView, Path=SelectedItem, Converter={StaticResource NullableToBooleanConverter}}">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition />
+                                </Grid.ColumnDefinitions>
                                 <Grid.RowDefinitions>
                                     <RowDefinition />
                                     <RowDefinition Height="Auto" />
                                 </Grid.RowDefinitions>
-                                <StackPanel>
-                                    <HeaderedContentControl Header="SATIN ALAN KİŞİ">
-                                        <TextBox Text="{Binding Satis.SatinAlanKisi, UpdateSourceTrigger=PropertyChanged}" />
-                                    </HeaderedContentControl>
-                                    <HeaderedContentControl Header="TELEFON">
-                                        <Extensions:MaskedTextBox IncludeLiterals="False" IncludePrompt="False" Mask="(000) 000 00 00"
-                                            Value="{Binding Satis.Telefon, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                    </HeaderedContentControl>
-                                    <HeaderedContentControl Header="ADET">
-                                        <Extensions:NumericUpDownControl Maximum="{x:Static system:Double.MaxValue}"
-                                            Orientation="Horizontal" SmallChange="1"
-                                            Value="{Binding Satis.SatisAdet, UpdateSourceTrigger=PropertyChanged}" />
-                                    </HeaderedContentControl>
-                                    <HeaderedContentControl Header="SATIŞ FİYATI">
-                                        <Extensions:NumericUpDownControl Maximum="{x:Static system:Double.MaxValue}"
-                                            Orientation="Horizontal" SmallChange="1"
-                                            Value="{Binding Satis.SatisFiyat, UpdateSourceTrigger=PropertyChanged}" />
-                                    </HeaderedContentControl>
-                                    <HeaderedContentControl Header="SATIŞ TARİHİ">
-                                        <DatePicker IsEnabled="False" SelectedDate="{Binding Satis.Tarih, UpdateSourceTrigger=PropertyChanged}" />
-                                    </HeaderedContentControl>
-                                </StackPanel>
-                                <Button Grid.Row="1" Command="{Binding SatışKaydıEkle, Mode=OneWay}" CommandParameter="{Binding SelectedItem, ElementName=listView}">
+                                <Image Grid.RowSpan="2"
+                                    Width="225"
+                                    Margin="3"
+                                    Source="{Binding SelectedItem.ResimYolu, ElementName=listView, Mode=OneWay, ConverterParameter='225', Converter={StaticResource DataImageFilePathImageUriConverter}}" />
+                                <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto">
+                                    <StackPanel>
+                                        <HeaderedContentControl Header="SATIN ALAN KİŞİ">
+                                            <TextBox Text="{Binding Satis.SatinAlanKisi, UpdateSourceTrigger=PropertyChanged}" />
+                                        </HeaderedContentControl>
+                                        <HeaderedContentControl Header="TELEFON">
+                                            <Extensions:MaskedTextBox IncludeLiterals="False" IncludePrompt="False" Mask="(000) 000 00 00"
+                                                Value="{Binding Satis.Telefon, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                        </HeaderedContentControl>
+                                        <HeaderedContentControl Header="ADET">
+                                            <Extensions:NumericUpDownControl Maximum="{x:Static system:Double.MaxValue}"
+                                                Orientation="Horizontal" SmallChange="1"
+                                                Value="{Binding Satis.SatisAdet, UpdateSourceTrigger=PropertyChanged}" />
+                                        </HeaderedContentControl>
+                                        <HeaderedContentControl Header="SATIŞ FİYATI">
+                                            <Extensions:NumericUpDownControl Maximum="{x:Static system:Double.MaxValue}"
+                                                Orientation="Horizontal" SmallChange="1"
+                                                Value="{Binding Satis.SatisFiyat, UpdateSourceTrigger=PropertyChanged}" />
+                                        </HeaderedContentControl>
+                                        <HeaderedContentControl Header="SATIŞ TARİHİ">
+                                            <DatePicker IsEnabled="False" SelectedDate="{Binding Satis.Tarih, UpdateSourceTrigger=PropertyChanged}" />
+                                        </HeaderedContentControl>
+                                    </StackPanel>
+                                </ScrollViewer>
+                                <Button Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2"
+                                    Command="{Binding SatışKaydıEkle, Mode=OneWay}"
+                                    CommandParameter="{Binding SelectedItem, ElementName=listView}">
                                     <Button.Content>
                                         <StackPanel Orientation="Horizontal">
                                             <Image Width="32" Height="32">
