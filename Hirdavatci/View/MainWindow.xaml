@@ -11,6 +11,7 @@
     UseLayoutRounding="True" WindowStartupLocation="CenterScreen" WindowState="Maximized"
     mc:Ignorable="d">
     <Window.Resources>
+        <Extensions:ReverseBooleanConverter x:Key="ReverseBooleanConverter" />
         <Extensions:NullableToBooleanConverter x:Key="NullableToBooleanConverter" />
         <Extensions:StringNullableToBooleanConverter x:Key="StringNullableToBooleanConverter" />
         <Extensions:SystemFileIconConverter x:Key="SystemFileIconConverter" />
@@ -142,7 +143,9 @@
                 <GroupBox Header="DEPO DURUMU" Grid.Row="0">
                     <ListView x:Name="listView"
                         ItemsSource="{Binding Mode=OneWay, Source={StaticResource CvsMalzemeler}}"
-                        Extensions:GridViewSort.AutoSort="True" VirtualizingPanel.VirtualizationMode="Recycling">
+                        Extensions:GridViewSort.AutoSort="True"
+                        SelectedItem="{Binding Malzeme.SeçiliMalzeme}"
+                        VirtualizingPanel.VirtualizationMode="Recycling">
                         <ListView.ItemContainerStyle>
                             <Style TargetType="ListViewItem">
                                 <Style.Triggers>
@@ -200,7 +203,19 @@
                                                         <Image x:Name="Img"
                                                             Width="175" Height="175"
                                                             Source="{Binding Barkod, Converter={StaticResource BarcodeToImageConverter}}" />
-                                                        <Button Content="KAREKOD YAZDIR" Command="{Binding DataContext.KareKodYazdır, ElementName=grid}" CommandParameter="{Binding ElementName=Img}" />
+                                                        <Button Command="{Binding DataContext.KareKodYazdır, ElementName=grid}" CommandParameter="{Binding ElementName=Img}">
+                                                            <StackPanel Orientation="Horizontal">
+                                                                <Image Width="32" Height="32">
+                                                                    <Image.Source>
+                                                                        <MultiBinding Converter="{StaticResource SystemFileIconConverter}">
+                                                                            <Binding Source="Shell32.dll" />
+                                                                            <Binding Source="136" />
+                                                                        </MultiBinding>
+                                                                    </Image.Source>
+                                                                </Image>
+                                                                <TextBlock Text="KAREKOD YAZDIR" VerticalAlignment="Center" />
+                                                            </StackPanel>
+                                                        </Button>
                                                     </StackPanel>
                                                 </Extensions:ContentToggleButton.Content>
                                             </Extensions:ContentToggleButton>
@@ -257,7 +272,16 @@
                                                                     Orientation="Horizontal" SmallChange="1"
                                                                     Value="{Binding EklenenMalzemeAdeti, UpdateSourceTrigger=PropertyChanged}" />
                                                             </HeaderedContentControl>
-                                                            <Button Content="MALZEME EKLE" Command="{Binding DataContext.DepoyaYeniMalzemeEkle, ElementName=grid}" CommandParameter="{Binding Mode=OneWay}" />
+                                                            <HeaderedContentControl>
+                                                                <HeaderedContentControl.Header>
+                                                                    <CheckBox x:Name="Cb" Content="FİYATI GÜNCELLE" />
+                                                                </HeaderedContentControl.Header>
+                                                                <Extensions:NumericUpDownControl IsEnabled="{Binding ElementName=Cb, Path=IsChecked}"
+                                                                    Maximum="{x:Static system:Double.MaxValue}"
+                                                                    Minimum="1" Orientation="Horizontal" SmallChange="1"
+                                                                    Value="{Binding BirimFiyat, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                                            </HeaderedContentControl>
+                                                            <Button Content="MALZEME EKLE/GÜNCELLE" Command="{Binding DataContext.DepoyaYeniMalzemeEkle, ElementName=grid}" CommandParameter="{Binding Mode=OneWay}" />
                                                         </StackPanel>
                                                     </GroupBox>
                                                 </Extensions:ContentToggleButton.Content>
@@ -283,7 +307,7 @@
                 <GroupBox Header="SATIŞLAR" Grid.Row="1">
                     <TabControl>
                         <TabItem Header="SATIŞ EKLE">
-                            <Grid>
+                            <Grid IsEnabled="{Binding ElementName=listView, Path=SelectedItem, Converter={StaticResource NullableToBooleanConverter}}">
                                 <Grid.RowDefinitions>
                                     <RowDefinition />
                                     <RowDefinition Height="Auto" />
@@ -291,6 +315,10 @@
                                 <StackPanel>
                                     <HeaderedContentControl Header="SATIN ALAN KİŞİ">
                                         <TextBox Text="{Binding Satis.SatinAlanKisi, UpdateSourceTrigger=PropertyChanged}" />
+                                    </HeaderedContentControl>
+                                    <HeaderedContentControl Header="TELEFON">
+                                        <Extensions:MaskedTextBox IncludeLiterals="False" IncludePrompt="False" Mask="(000) 000 00 00"
+                                            Value="{Binding Satis.Telefon, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                     </HeaderedContentControl>
                                     <HeaderedContentControl Header="ADET">
                                         <Extensions:NumericUpDownControl Maximum="{x:Static system:Double.MaxValue}"
@@ -366,6 +394,13 @@
                                                 Width="100"
                                                 Extensions:GridViewSort.PropertyName="SatinAlanKisi"
                                                 DisplayMemberBinding="{Binding SatinAlanKisi}" />
+                                            <GridViewColumn Header="TELEFON" Width="100" Extensions:GridViewSort.PropertyName="Telefon">
+                                                <GridViewColumn.CellTemplate>
+                                                    <DataTemplate>
+                                                        <Extensions:MaskedTextBlock InputMask="(000) 000 00 00" UnmaskedText="{Binding Telefon, Mode=OneWay}" />
+                                                    </DataTemplate>
+                                                </GridViewColumn.CellTemplate>
+                                            </GridViewColumn>
                                             <GridViewColumn Header="SATIŞ&#x0a;ADETİ"
                                                 Width="50"
                                                 Extensions:GridViewSort.PropertyName="SatisAdet"
@@ -382,7 +417,7 @@
                                                 Width="80"
                                                 Extensions:GridViewSort.PropertyName="Tarih"
                                                 DisplayMemberBinding="{Binding Tarih, StringFormat=\{0:d\}}" />
-                                            <GridViewColumn Header="İADE" Width="120">
+                                            <GridViewColumn Header="İADE" Width="140">
                                                 <GridViewColumn.HeaderTemplate>
                                                     <DataTemplate>
                                                         <StackPanel Orientation="Horizontal">
@@ -393,8 +428,11 @@
                                                 </GridViewColumn.HeaderTemplate>
                                                 <GridViewColumn.CellTemplate>
                                                     <DataTemplate>
-                                                        <StackPanel Orientation="Horizontal">
+                                                        <StackPanel IsEnabled="{Binding IadeEdildiMi, Converter={StaticResource ReverseBooleanConverter}}" Orientation="Horizontal">
                                                             <TextBox Text="{Binding Aciklama, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="50" ToolTip="Bir Açıklama Yazın." />
+                                                            <Extensions:NumericUpDownControl Maximum="{Binding SatisAdet}"
+                                                                Minimum="1" SmallChange="1"
+                                                                Value="{Binding IadeMiktari, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
                                                             <Button Content="İADE ET" Command="{Binding DataContext.MalzemeIadeEt, ElementName=grid}">
                                                                 <Button.CommandParameter>
                                                                     <MultiBinding Converter="{StaticResource CloneConverter}">

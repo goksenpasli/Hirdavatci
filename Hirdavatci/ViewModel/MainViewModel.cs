@@ -74,12 +74,13 @@ namespace Hirdavatci
                     Iadeler ıadeler = new()
                     {
                         IadeTarihi = DateTime.Today,
-                        IadeMiktari = (dc[0] as Satis)?.SatisAdet ?? 0,
+                        IadeMiktari = (dc[0] as Satis)?.IadeMiktari ?? 0,
                         IadeAciklama = (dc[0] as Satis)?.Aciklama
                     };
                     (dc[0] as Satis).IadeEdildiMi = true;
+                    (dc[0] as Satis).SatisAdet -= (dc[0] as Satis).IadeMiktari;
                     (dc[0] as Satis)?.Iadeler.Add(ıadeler);
-                    (dc[1] as Malzeme).KalanAdet += (dc[0] as Satis).SatisAdet;
+                    (dc[1] as Malzeme).KalanAdet += (dc[0] as Satis).IadeMiktari;
                     Malzemeler.Serialize();
                 }
             }, parameter => parameter is object[] dc && !string.IsNullOrWhiteSpace((dc[0] as Satis)?.Aciklama) && (dc[0] as Satis)?.IadeEdildiMi == false);
@@ -92,7 +93,7 @@ namespace Hirdavatci
                     dc.ToplamAdet += dc.EklenenMalzemeAdeti;
                     Malzemeler.Serialize();
                 }
-            }, parameter => parameter is Malzeme dc && dc.EklenenMalzemeAdeti > 0);
+            }, parameter => true);
 
             KareKodYazdır = new RelayCommand<object>(parameter =>
             {
@@ -142,7 +143,8 @@ namespace Hirdavatci
                         SatinAlanKisi = Satis.SatinAlanKisi,
                         SatisAdet = Satis.SatisAdet,
                         SatisFiyat = Satis.SatisFiyat,
-                        Tarih = Satis.Tarih
+                        Tarih = Satis.Tarih,
+                        Telefon = Satis.Telefon
                     };
 
                     dc.KalanAdet -= Satis.SatisAdet;
@@ -237,6 +239,11 @@ namespace Hirdavatci
                         CvsMalzemeler.View.Filter = null;
                     }
                 };
+            }
+
+            if (e.PropertyName == "SeçiliMalzeme")
+            {
+                Satis.SatisFiyat = Malzeme.SeçiliMalzeme.BirimFiyat;
             }
         }
     }

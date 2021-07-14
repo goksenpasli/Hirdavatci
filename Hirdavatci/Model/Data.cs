@@ -89,6 +89,8 @@ namespace Hirdavatci
 
         private ObservableCollection<Satis> satislar = new();
 
+        private Malzeme seçiliMalzeme;
+
         private int toplamAdet;
 
         [XmlAttribute(AttributeName = "Aciklama")]
@@ -271,6 +273,21 @@ namespace Hirdavatci
             }
         }
 
+        [XmlIgnore]
+        public Malzeme SeçiliMalzeme
+        {
+            get => seçiliMalzeme;
+
+            set
+            {
+                if (seçiliMalzeme != value)
+                {
+                    seçiliMalzeme = value;
+                    OnPropertyChanged(nameof(SeçiliMalzeme));
+                }
+            }
+        }
+
         [XmlAttribute(AttributeName = "ToplamAdet")]
         public int ToplamAdet
         {
@@ -317,6 +334,8 @@ namespace Hirdavatci
 
         private ObservableCollection<Iadeler> ıadeler = new();
 
+        private int ıadeMiktari;
+
         private int ıd;
 
         private string satinAlanKisi;
@@ -326,6 +345,8 @@ namespace Hirdavatci
         private double satisFiyat;
 
         private DateTime tarih = DateTime.Today;
+
+        private string telefon;
 
         private double toplamGelir;
 
@@ -370,6 +391,21 @@ namespace Hirdavatci
                 {
                     ıadeler = value;
                     OnPropertyChanged(nameof(Iadeler));
+                }
+            }
+        }
+
+        [XmlIgnore]
+        public int IadeMiktari
+        {
+            get => ıadeMiktari;
+
+            set
+            {
+                if (ıadeMiktari != value)
+                {
+                    ıadeMiktari = value;
+                    OnPropertyChanged(nameof(IadeMiktari));
                 }
             }
         }
@@ -445,6 +481,21 @@ namespace Hirdavatci
                 {
                     tarih = value;
                     OnPropertyChanged(nameof(Tarih));
+                }
+            }
+        }
+
+        [XmlAttribute(AttributeName = "Telefon")]
+        public string Telefon
+        {
+            get => telefon;
+
+            set
+            {
+                if (telefon != value)
+                {
+                    telefon = value;
+                    OnPropertyChanged(nameof(Telefon));
                 }
             }
         }
