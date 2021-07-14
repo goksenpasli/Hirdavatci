@@ -49,7 +49,8 @@
                         <TextBox Text="{Binding Malzeme.Aciklama, UpdateSourceTrigger=PropertyChanged}" />
                     </HeaderedContentControl>
                     <HeaderedContentControl Header="MALZEME BİRİM FİYATI">
-                        <Extensions:NumericUpDownControl Maximum="{x:Static system:Double.MaxValue}"
+                        <Extensions:NumericUpDownControl CurrencyMode="True"
+                            Maximum="{x:Static system:Double.MaxValue}"
                             Orientation="Horizontal" SmallChange="1"
                             Value="{Binding Malzeme.BirimFiyat, UpdateSourceTrigger=PropertyChanged}" />
                     </HeaderedContentControl>
@@ -277,6 +278,7 @@
                                                                     <CheckBox x:Name="Cb" Content="FİYATI GÜNCELLE" />
                                                                 </HeaderedContentControl.Header>
                                                                 <Extensions:NumericUpDownControl IsEnabled="{Binding ElementName=Cb, Path=IsChecked}"
+                                                                    CurrencyMode="True"
                                                                     Maximum="{x:Static system:Double.MaxValue}"
                                                                     Minimum="1" Orientation="Horizontal" SmallChange="1"
                                                                     Value="{Binding BirimFiyat, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
@@ -335,7 +337,8 @@
                                                 Value="{Binding Satis.SatisAdet, UpdateSourceTrigger=PropertyChanged}" />
                                         </HeaderedContentControl>
                                         <HeaderedContentControl Header="SATIŞ FİYATI">
-                                            <Extensions:NumericUpDownControl Maximum="{x:Static system:Double.MaxValue}"
+                                            <Extensions:NumericUpDownControl CurrencyMode="True"
+                                                Maximum="{x:Static system:Double.MaxValue}"
                                                 Orientation="Horizontal" SmallChange="1"
                                                 Value="{Binding Satis.SatisFiyat, UpdateSourceTrigger=PropertyChanged}" />
                                         </HeaderedContentControl>
