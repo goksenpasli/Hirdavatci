@@ -12,6 +12,7 @@
     UseLayoutRounding="True" WindowStartupLocation="CenterScreen" WindowState="Maximized"
     mc:Ignorable="d">
     <Window.Resources>
+        <local:MalzemeValueToProgressBarColorConverter x:Key="MalzemeValueToProgressBarColorConverter"/>
         <Extensions:ReverseBooleanConverter x:Key="ReverseBooleanConverter" />
         <Extensions:NullableToBooleanConverter x:Key="NullableToBooleanConverter" />
         <Extensions:StringNullableToBooleanConverter x:Key="StringNullableToBooleanConverter" />
@@ -22,7 +23,7 @@
         <Style TargetType="{x:Type HeaderedContentControl}">
             <Setter Property="IsTabStop" Value="False" />
         </Style>
-        <CollectionViewSource x:Key="Cvs" d:DesignSource="{d:DesignInstance CreateList=True, Type={x:Type local:Satis}}" Source="{Binding SelectedItem.Satislar, ElementName=listView}">
+        <CollectionViewSource x:Key="Cvs" d:DesignSource="{d:DesignInstance CreateList=True, Type={x:Type local:Satis}}" Source="{Binding Malzeme.SeçiliMalzeme.Satislar}">
             <CollectionViewSource.GroupDescriptions>
                 <PropertyGroupDescription PropertyName="Tarih" />
             </CollectionViewSource.GroupDescriptions>
@@ -60,7 +61,7 @@
                             Orientation="Horizontal" SmallChange="1"
                             Value="{Binding Malzeme.ToplamAdet, UpdateSourceTrigger=PropertyChanged}" />
                     </HeaderedContentControl>
-                    <Extensions:SplitButton Command="{Binding MalzemeResimYükle, Mode=OneWay}" CommandParameter="{Binding Malzeme}">
+                    <Extensions:SplitButton HorizontalContentAlignment="Stretch" Command="{Binding MalzemeResimYükle, Mode=OneWay}" CommandParameter="{Binding Malzeme}">
                         <Extensions:SplitButton.Content>
                             <StackPanel Orientation="Horizontal">
                                 <Image Width="32" Height="32">
@@ -95,10 +96,10 @@
                                 </HeaderedContentControl.Header>
                                 <TextBox Text="{Binding Malzeme.Barkod, UpdateSourceTrigger=PropertyChanged}" />
                             </HeaderedContentControl>
-                            <Extensions:ContentSlider Grid.Row="1"
+                            <Slider Grid.Row="1"
                                 AutoToolTipPlacement="TopLeft" Maximum="175" Orientation="Vertical" SmallChange="1"
                                 Value="{Binding QrHeight, Source={x:Static properties:Settings.Default}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                            <Grid Grid.Row="1" Grid.Column="1"
+                            <Viewbox Grid.Row="1" Grid.Column="1"
                                 Width="{Binding QrWidth, Source={x:Static properties:Settings.Default}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                 Height="{Binding QrHeight, Source={x:Static properties:Settings.Default}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                                 <Image Source="{Binding Malzeme.BarkodImage}">
@@ -116,7 +117,7 @@
                                                     </Image>
                                                 </MenuItem.Icon>
                                             </MenuItem>
-                                            <MenuItem Header="KOD YAZDIR" Command="{Binding KareKodYazdır}" CommandParameter="{Binding Parent. PlacementTarget, RelativeSource={RelativeSource Mode=Self}}">
+                                            <MenuItem Header="KOD YAZDIR" Command="{Binding KareKodYazdır}" CommandParameter="{Binding Parent.PlacementTarget, RelativeSource={RelativeSource Mode=Self}}">
                                                 <MenuItem.Icon>
                                                     <Image Width="16" Height="16">
                                                         <Image.Source>
@@ -131,14 +132,20 @@
                                         </ContextMenu>
                                     </Image.ContextMenu>
                                 </Image>
-                            </Grid>
-                            <Extensions:ContentSlider Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2"
+                            </Viewbox>
+                            <Slider Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2"
                                 AutoToolTipPlacement="TopLeft" Maximum="350" SmallChange="1"
                                 Value="{Binding QrWidth, Source={x:Static properties:Settings.Default}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                            <Button Content="S"
-                                Grid.Row="2"
-                                Command="{Binding AyarKaydet}"
-                                ToolTip="Ayar Kaydet" />
+                            <Button Grid.Row="2" Command="{Binding AyarKaydet}" ToolTip="Ayar Kaydet">
+                                <Image Width="16" Height="16">
+                                    <Image.Source>
+                                        <MultiBinding Converter="{StaticResource SystemFileIconConverter}">
+                                            <Binding Source="Shell32.dll" />
+                                            <Binding Source="121" />
+                                        </MultiBinding>
+                                    </Image.Source>
+                                </Image>
+                            </Button>
                         </Grid>
                     </GroupBox>
                 </StackPanel>
@@ -158,7 +165,9 @@
                             </StackPanel>
                         </Button.Content>
                     </Button>
-                    <Extensions:SplitButton Command="{Binding VerileriYedekle}" IsTabStop="False" PlacementMode="Top">
+                    <Extensions:SplitButton HorizontalContentAlignment="Stretch"
+                        Command="{Binding VerileriYedekle}"
+                        IsTabStop="False" PlacementMode="Top">
                         <Extensions:SplitButton.Content>
                             <StackPanel Orientation="Horizontal">
                                 <Image Width="32" Height="32">
@@ -188,8 +197,7 @@
                     <RowDefinition />
                 </Grid.RowDefinitions>
                 <GroupBox Header="DEPO DURUMU" Grid.Row="0">
-                    <ListView x:Name="listView"
-                        ItemsSource="{Binding Mode=OneWay, Source={StaticResource CvsMalzemeler}}"
+                    <ListView ItemsSource="{Binding Mode=OneWay, Source={StaticResource CvsMalzemeler}}"
                         Extensions:GridViewSort.AutoSort="True"
                         SelectedItem="{Binding Malzeme.SeçiliMalzeme}"
                         VirtualizingPanel.VirtualizationMode="Recycling">
@@ -254,9 +262,9 @@
                                                 OverContent="{Binding Barkod}">
                                                 <Extensions:ContentToggleButton.Content>
                                                     <StackPanel>
-                                                        <Image x:Name="Img"
-                                                            Width="175" Height="175"
-                                                            Source="{Binding Barkod, Converter={StaticResource BarcodeToImageConverter}}" />
+                                                        <Viewbox Width="{Binding QrWidth, Source={x:Static properties:Settings.Default}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Height="{Binding QrHeight, Source={x:Static properties:Settings.Default}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                                            <Image x:Name="Img" Source="{Binding Barkod, Converter={StaticResource BarcodeToImageConverter}}" />
+                                                        </Viewbox>
                                                         <Button Command="{Binding DataContext.KareKodYazdır, ElementName=grid}" CommandParameter="{Binding ElementName=Img}">
                                                             <StackPanel Orientation="Horizontal">
                                                                 <Image Width="32" Height="32">
@@ -311,13 +319,7 @@
                                 <GridViewColumn Header="MALZEME&#x0a;EKLE">
                                     <GridViewColumn.CellTemplate>
                                         <DataTemplate>
-                                            <Extensions:ContentToggleButton BorderBrush="{x:Null}">
-                                                <Extensions:ContentToggleButton.OverContent>
-                                                    <Grid>
-                                                        <ProgressBar Style="{Binding Mode=OneWay, Source={StaticResource ProgressBarStyle}}" Maximum="{Binding ToplamAdet}" Value="{Binding KalanAdet}" />
-                                                        <TextBlock Text="MALZEME EKLE" Margin="1" />
-                                                    </Grid>
-                                                </Extensions:ContentToggleButton.OverContent>
+                                            <Extensions:ContentToggleButton OverContent="MALZEME EKLE">
                                                 <Extensions:ContentToggleButton.Content>
                                                     <GroupBox Header="DEPOYA YENİ MALZEME EKLE">
                                                         <StackPanel>
@@ -362,8 +364,9 @@
                 <GroupBox Header="SATIŞLAR" Grid.Row="1">
                     <TabControl>
                         <TabItem Header="SATIŞ EKLE">
-                            <Grid IsEnabled="{Binding ElementName=listView, Path=SelectedItem, Converter={StaticResource NullableToBooleanConverter}}">
+                            <Grid IsEnabled="{Binding Malzeme.SeçiliMalzeme, Converter={StaticResource NullableToBooleanConverter}}">
                                 <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
                                     <ColumnDefinition Width="Auto" />
                                     <ColumnDefinition />
                                 </Grid.ColumnDefinitions>
@@ -371,38 +374,46 @@
                                     <RowDefinition />
                                     <RowDefinition Height="Auto" />
                                 </Grid.RowDefinitions>
-                                <Image Grid.RowSpan="2"
+                                <ProgressBar Grid.RowSpan="2" Foreground="{Binding Malzeme.SeçiliMalzeme, Converter={StaticResource MalzemeValueToProgressBarColorConverter}}"
+                                    Width="16"
+                                    Style="{Binding Mode=OneWay, Source={StaticResource ProgressBarStyle}}"
+                                    Maximum="{Binding Malzeme.SeçiliMalzeme.ToplamAdet}"
+                                    Orientation="Vertical"
+                                    Value="{Binding Malzeme.SeçiliMalzeme.KalanAdet}" />
+                                <Image Grid.Column="1" Grid.RowSpan="2"
                                     Width="225"
                                     Margin="3"
-                                    Source="{Binding SelectedItem.ResimYolu, ElementName=listView, Mode=OneWay, ConverterParameter='225', Converter={StaticResource DataImageFilePathImageUriConverter}}" />
-                                <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto">
-                                    <StackPanel>
-                                        <HeaderedContentControl Header="SATIN ALAN KİŞİ">
-                                            <TextBox Text="{Binding Satis.SatinAlanKisi, UpdateSourceTrigger=PropertyChanged}" />
-                                        </HeaderedContentControl>
-                                        <HeaderedContentControl Header="TELEFON">
-                                            <Extensions:MaskedTextBox IncludeLiterals="False" IncludePrompt="False" Mask="(000) 000 00 00"
-                                                Value="{Binding Satis.Telefon, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                        </HeaderedContentControl>
-                                        <HeaderedContentControl Header="ADET">
-                                            <Extensions:NumericUpDownControl Maximum="{x:Static system:Double.MaxValue}"
-                                                Orientation="Horizontal" SmallChange="1"
-                                                Value="{Binding Satis.SatisAdet, UpdateSourceTrigger=PropertyChanged}" />
-                                        </HeaderedContentControl>
-                                        <HeaderedContentControl Header="SATIŞ FİYATI">
-                                            <Extensions:NumericUpDownControl CurrencyMode="True"
-                                                Maximum="{x:Static system:Double.MaxValue}"
-                                                Orientation="Horizontal" SmallChange="1"
-                                                Value="{Binding Satis.SatisFiyat, UpdateSourceTrigger=PropertyChanged}" />
-                                        </HeaderedContentControl>
-                                        <HeaderedContentControl Header="SATIŞ TARİHİ">
-                                            <DatePicker IsEnabled="False" SelectedDate="{Binding Satis.Tarih, UpdateSourceTrigger=PropertyChanged}" />
-                                        </HeaderedContentControl>
-                                    </StackPanel>
+                                    Source="{Binding Malzeme.SeçiliMalzeme.ResimYolu, Mode=OneWay, ConverterParameter='225', Converter={StaticResource DataImageFilePathImageUriConverter}}" />
+                                <ScrollViewer Grid.Column="2" VerticalScrollBarVisibility="Auto">
+                                    <GroupBox Header="SATIŞ BİLGİLERİ">
+                                        <StackPanel>
+                                            <HeaderedContentControl Header="SATIN ALAN KİŞİ">
+                                                <TextBox Text="{Binding Satis.SatinAlanKisi, UpdateSourceTrigger=PropertyChanged}" />
+                                            </HeaderedContentControl>
+                                            <HeaderedContentControl Header="TELEFON">
+                                                <Extensions:MaskedTextBox IncludeLiterals="False" IncludePrompt="False" Mask="(000) 000 00 00"
+                                                    Value="{Binding Satis.Telefon, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                            </HeaderedContentControl>
+                                            <HeaderedContentControl Header="ADET">
+                                                <Extensions:NumericUpDownControl Maximum="{x:Static system:Double.MaxValue}"
+                                                    Orientation="Horizontal" SmallChange="1"
+                                                    Value="{Binding Satis.SatisAdet, UpdateSourceTrigger=PropertyChanged}" />
+                                            </HeaderedContentControl>
+                                            <HeaderedContentControl Header="SATIŞ FİYATI">
+                                                <Extensions:NumericUpDownControl CurrencyMode="True"
+                                                    Maximum="{x:Static system:Double.MaxValue}"
+                                                    Orientation="Horizontal" SmallChange="1"
+                                                    Value="{Binding Satis.SatisFiyat, UpdateSourceTrigger=PropertyChanged}" />
+                                            </HeaderedContentControl>
+                                            <HeaderedContentControl Header="SATIŞ TARİHİ">
+                                                <DatePicker IsEnabled="False" SelectedDate="{Binding Satis.Tarih, UpdateSourceTrigger=PropertyChanged}" />
+                                            </HeaderedContentControl>
+                                        </StackPanel>
+                                    </GroupBox>
                                 </ScrollViewer>
-                                <Button Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2"
+                                <Button Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="2"
                                     Command="{Binding SatışKaydıEkle, Mode=OneWay}"
-                                    CommandParameter="{Binding SelectedItem, ElementName=listView}">
+                                    CommandParameter="{Binding Malzeme.SeçiliMalzeme}">
                                     <Button.Content>
                                         <StackPanel Orientation="Horizontal">
                                             <Image Width="32" Height="32">
@@ -503,7 +514,7 @@
                                                                 <Button.CommandParameter>
                                                                     <MultiBinding Converter="{StaticResource CloneConverter}">
                                                                         <Binding Mode="OneWay" />
-                                                                        <Binding ElementName="listView" Mode="OneWay" Path="SelectedItem" />
+                                                                        <Binding Mode="OneWay" Path="DataContext.Malzeme.SeçiliMalzeme" RelativeSource="{RelativeSource AncestorType=local:MainWindow}" />
                                                                     </MultiBinding>
                                                                 </Button.CommandParameter>
                                                             </Button>

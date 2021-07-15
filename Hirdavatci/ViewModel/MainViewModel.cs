@@ -12,7 +12,7 @@ using System.Windows.Media.Imaging;
 
 namespace Hirdavatci
 {
-    public class MainViewModel
+    public class MainViewModel : InpcBase
     {
         private readonly CollectionViewSource CvsMalzemeler = (CollectionViewSource)Application.Current?.MainWindow?.TryFindResource("CvsMalzemeler");
 
@@ -84,6 +84,7 @@ namespace Hirdavatci
                     (dc[0] as Satis).SatisAdet -= (dc[0] as Satis).IadeMiktari;
                     (dc[0] as Satis)?.Iadeler.Add(ıadeler);
                     (dc[1] as Malzeme).KalanAdet += (dc[0] as Satis).IadeMiktari;
+                    OnPropertyChanged(nameof(Malzeme));
                     Malzemeler.Serialize();
                 }
             }, parameter => parameter is object[] dc && !string.IsNullOrWhiteSpace((dc[0] as Satis)?.Aciklama) && (dc[0] as Satis)?.IadeEdildiMi == false && (dc[0] as Satis)?.IadeMiktari > 0);
@@ -102,7 +103,6 @@ namespace Hirdavatci
             {
                 if (parameter is Image dc)
                 {
-                  
                     PrintDialog printDlg = new();
                     if (printDlg.ShowDialog() == true)
                     {
@@ -153,6 +153,7 @@ namespace Hirdavatci
 
                     dc.KalanAdet -= Satis.SatisAdet;
                     dc.Satislar.Add(satis);
+                    OnPropertyChanged(nameof(Malzeme));
                     Malzemeler.Serialize();
                 }
             }, parameter => parameter is Malzeme malzeme && !string.IsNullOrWhiteSpace(Satis.SatinAlanKisi) && Satis.SatisAdet > 0 && Satis.SatisFiyat > 0);
