@@ -33,8 +33,8 @@ namespace Hirdavatci
                 Format = format,
                 Options = new ZXing.Common.EncodingOptions
                 {
-                    Height = 175,
-                    Width = 175,
+                    Height = (int)Properties.Settings.Default.QrHeight,
+                    Width = (int)Properties.Settings.Default.QrWidth,
                     Margin = 0
                 }
             };

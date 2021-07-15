@@ -193,6 +193,8 @@ namespace Hirdavatci
             }, parameter => true);
 
             Malzeme.PropertyChanged += Malzeme_PropertyChanged;
+
+            Properties.Settings.Default.PropertyChanged += Default_PropertyChanged;
         }
 
         public ICommand DepoyaEkle { get; }
@@ -234,18 +236,31 @@ namespace Hirdavatci
             }
         }
 
+        private void Default_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName is "QrHeight" or "QrWidth")
+            {
+                GenerateBarcode();
+            }
+        }
+
+        private void GenerateBarcode()
+        {
+            try
+            {
+                Malzeme.BarkodImage = $"{Malzeme.Barkod}".GenerateBarCodeImage(Malzeme.BarcodeFormat);
+            }
+            catch (Exception ex)
+            {
+                _ = MessageBox.Show(ex.Message, "HIRDAVATÇI", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+            }
+        }
+
         private void Malzeme_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName is "Barkod" or "BarcodeFormat")
             {
-                try
-                {
-                    Malzeme.BarkodImage = $"{Malzeme.Barkod}".GenerateBarCodeImage(Malzeme.BarcodeFormat);
-                }
-                catch (Exception ex)
-                {
-                    _ = MessageBox.Show(ex.Message, "HIRDAVATÇI", MessageBoxButton.OK, MessageBoxImage.Exclamation);
-                }
+                GenerateBarcode();
             }
 
             if (e.PropertyName == "BarKodAramaMetni")

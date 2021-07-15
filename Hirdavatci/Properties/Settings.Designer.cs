@@ -22,5 +22,29 @@ namespace Hirdavatci.Properties {
                 return defaultInstance;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("175")]
+        public double QrWidth {
+            get {
+                return ((double)(this["QrWidth"]));
+            }
+            set {
+                this["QrWidth"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("175")]
+        public double QrHeight {
+            get {
+                return ((double)(this["QrHeight"]));
+            }
+            set {
+                this["QrHeight"] = value;
+            }
+        }
     }
 }
