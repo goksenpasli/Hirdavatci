@@ -12,7 +12,7 @@ namespace Hirdavatci
             if (value is Malzeme malzeme)
             {
                 double oran = (double)malzeme.KalanAdet / malzeme.ToplamAdet;
-                if (oran > 0.66)
+                if (oran >= 0.66)
                 {
                     return Brushes.Green;
                 }
@@ -20,7 +20,7 @@ namespace Hirdavatci
                 {
                     return Brushes.Orange;
                 }
-                if (oran < 0.33)
+                if (oran <= 0.33)
                 {
                     return Brushes.Red;
                 }
