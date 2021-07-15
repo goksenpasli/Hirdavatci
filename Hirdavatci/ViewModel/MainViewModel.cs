@@ -95,6 +95,7 @@ namespace Hirdavatci
                 {
                     dc.KalanAdet += dc.EklenenMalzemeAdeti;
                     dc.ToplamAdet += dc.EklenenMalzemeAdeti;
+                    OnPropertyChanged(nameof(Malzeme));
                     Malzemeler.Serialize();
                 }
             }, parameter => true);
