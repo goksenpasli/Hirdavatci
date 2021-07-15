@@ -60,12 +60,6 @@
                             Orientation="Horizontal" SmallChange="1"
                             Value="{Binding Malzeme.ToplamAdet, UpdateSourceTrigger=PropertyChanged}" />
                     </HeaderedContentControl>
-                    <HeaderedContentControl>
-                        <HeaderedContentControl.Header>
-                            <ComboBox ItemsSource="{Binding Mode=OneWay, Source={StaticResource Barcodes}}" SelectedItem="{Binding Malzeme.BarcodeFormat}" />
-                        </HeaderedContentControl.Header>
-                        <TextBox Text="{Binding Malzeme.Barkod, UpdateSourceTrigger=PropertyChanged}" />
-                    </HeaderedContentControl>
                     <Extensions:SplitButton Command="{Binding MalzemeResimYükle, Mode=OneWay}" CommandParameter="{Binding Malzeme}">
                         <Extensions:SplitButton.Content>
                             <StackPanel Orientation="Horizontal">
@@ -84,54 +78,69 @@
                             <local:CameraUserControl Width="480" Height="360" PropertyChanged="CameraUserControl_PropertyChanged" />
                         </Extensions:SplitButton.InternalContent>
                     </Extensions:SplitButton>
-                    <Grid>
-                        <Grid.RowDefinitions>
-                            <RowDefinition />
-                            <RowDefinition Height="Auto" />
-                        </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition />
-                        </Grid.ColumnDefinitions>
-                        <Extensions:ContentSlider AutoToolTipPlacement="TopLeft" Maximum="175" Orientation="Vertical" SmallChange="1"
-                            Value="{Binding QrHeight, Source={x:Static properties:Settings.Default}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                        <Image Grid.Column="1"
-                            Width="{Binding QrWidth, Source={x:Static properties:Settings.Default}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                            Height="{Binding QrHeight, Source={x:Static properties:Settings.Default}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                            Source="{Binding Malzeme.BarkodImage}">
-                            <Image.ContextMenu>
-                                <ContextMenu>
-                                    <MenuItem Header="RESİM OLARAK SAKLA" Command="{Binding KareKodSakla, Mode=OneWay}" CommandParameter="{Binding Malzeme.BarkodImage}">
-                                        <MenuItem.Icon>
-                                            <Image Width="16" Height="16">
-                                                <Image.Source>
-                                                    <MultiBinding Converter="{StaticResource SystemFileIconConverter}">
-                                                        <Binding Source="Shell32.dll" />
-                                                        <Binding Source="122" />
-                                                    </MultiBinding>
-                                                </Image.Source>
-                                            </Image>
-                                        </MenuItem.Icon>
-                                    </MenuItem>
-                                    <MenuItem Header="KOD YAZDIR" Command="{Binding KareKodYazdır}" CommandParameter="{Binding Parent. PlacementTarget, RelativeSource={RelativeSource Mode=Self}}">
-                                        <MenuItem.Icon>
-                                            <Image Width="16" Height="16">
-                                                <Image.Source>
-                                                    <MultiBinding Converter="{StaticResource SystemFileIconConverter}">
-                                                        <Binding Source="Shell32.dll" />
-                                                        <Binding Source="136" />
-                                                    </MultiBinding>
-                                                </Image.Source>
-                                            </Image>
-                                        </MenuItem.Icon>
-                                    </MenuItem>
-                                </ContextMenu>
-                            </Image.ContextMenu>
-                        </Image>
-                        <Extensions:ContentSlider Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2"
-                            AutoToolTipPlacement="TopLeft" Maximum="350" SmallChange="1"
-                            Value="{Binding QrWidth, Source={x:Static properties:Settings.Default}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                    </Grid>
+                    <GroupBox Header="BARKOD">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+                            <HeaderedContentControl Grid.ColumnSpan="2">
+                                <HeaderedContentControl.Header>
+                                    <ComboBox ItemsSource="{Binding Mode=OneWay, Source={StaticResource Barcodes}}" SelectedItem="{Binding Malzeme.BarcodeFormat}" />
+                                </HeaderedContentControl.Header>
+                                <TextBox Text="{Binding Malzeme.Barkod, UpdateSourceTrigger=PropertyChanged}" />
+                            </HeaderedContentControl>
+                            <Extensions:ContentSlider Grid.Row="1"
+                                AutoToolTipPlacement="TopLeft" Maximum="175" Orientation="Vertical" SmallChange="1"
+                                Value="{Binding QrHeight, Source={x:Static properties:Settings.Default}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            <Grid Grid.Row="1" Grid.Column="1"
+                                Width="{Binding QrWidth, Source={x:Static properties:Settings.Default}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                Height="{Binding QrHeight, Source={x:Static properties:Settings.Default}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                <Image Source="{Binding Malzeme.BarkodImage}">
+                                    <Image.ContextMenu>
+                                        <ContextMenu>
+                                            <MenuItem Header="RESİM OLARAK SAKLA" Command="{Binding KareKodSakla, Mode=OneWay}" CommandParameter="{Binding Malzeme.BarkodImage}">
+                                                <MenuItem.Icon>
+                                                    <Image Width="16" Height="16">
+                                                        <Image.Source>
+                                                            <MultiBinding Converter="{StaticResource SystemFileIconConverter}">
+                                                                <Binding Source="Shell32.dll" />
+                                                                <Binding Source="122" />
+                                                            </MultiBinding>
+                                                        </Image.Source>
+                                                    </Image>
+                                                </MenuItem.Icon>
+                                            </MenuItem>
+                                            <MenuItem Header="KOD YAZDIR" Command="{Binding KareKodYazdır}" CommandParameter="{Binding Parent. PlacementTarget, RelativeSource={RelativeSource Mode=Self}}">
+                                                <MenuItem.Icon>
+                                                    <Image Width="16" Height="16">
+                                                        <Image.Source>
+                                                            <MultiBinding Converter="{StaticResource SystemFileIconConverter}">
+                                                                <Binding Source="Shell32.dll" />
+                                                                <Binding Source="136" />
+                                                            </MultiBinding>
+                                                        </Image.Source>
+                                                    </Image>
+                                                </MenuItem.Icon>
+                                            </MenuItem>
+                                        </ContextMenu>
+                                    </Image.ContextMenu>
+                                </Image>
+                            </Grid>
+                            <Extensions:ContentSlider Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2"
+                                AutoToolTipPlacement="TopLeft" Maximum="350" SmallChange="1"
+                                Value="{Binding QrWidth, Source={x:Static properties:Settings.Default}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                            <Button Content="S"
+                                Grid.Row="2"
+                                Command="{Binding AyarKaydet}"
+                                ToolTip="Ayar Kaydet" />
+                        </Grid>
+                    </GroupBox>
                 </StackPanel>
                 <UniformGrid Grid.Row="2" Columns="2">
                     <Button Command="{Binding DepoyaEkle}" CommandParameter="{Binding Malzeme}">

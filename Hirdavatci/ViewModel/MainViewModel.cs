@@ -102,6 +102,7 @@ namespace Hirdavatci
             {
                 if (parameter is Image dc)
                 {
+                  
                     PrintDialog printDlg = new();
                     if (printDlg.ShowDialog() == true)
                     {
@@ -164,6 +165,8 @@ namespace Hirdavatci
                 }
             }, parameter => true);
 
+            AyarKaydet = new RelayCommand<object>(parameter => Properties.Settings.Default.Save(), parameter => true);
+
             VerileriYedekle = new RelayCommand<object>(parameter =>
             {
                 SaveFileDialog saveFileDialog = new()
@@ -196,6 +199,8 @@ namespace Hirdavatci
 
             Properties.Settings.Default.PropertyChanged += Default_PropertyChanged;
         }
+
+        public ICommand AyarKaydet { get; }
 
         public ICommand DepoyaEkle { get; }
 
