@@ -59,11 +59,14 @@
                             Orientation="Horizontal" SmallChange="1"
                             Value="{Binding Malzeme.ToplamAdet, UpdateSourceTrigger=PropertyChanged}" />
                     </HeaderedContentControl>
-                    <HeaderedContentControl Header="MALZEME KOD">
+                    <HeaderedContentControl>
+                        <HeaderedContentControl.Header>
+                            <ComboBox ItemsSource="{Binding Mode=OneWay, Source={StaticResource Barcodes}}" SelectedItem="{Binding Malzeme.BarcodeFormat}" />
+                        </HeaderedContentControl.Header>
                         <TextBox Text="{Binding Malzeme.Barkod, UpdateSourceTrigger=PropertyChanged}" />
                     </HeaderedContentControl>
-                    <Button Command="{Binding MalzemeResimYükle, Mode=OneWay}" CommandParameter="{Binding Malzeme}">
-                        <Button.Content>
+                    <Extensions:SplitButton Command="{Binding MalzemeResimYükle, Mode=OneWay}" CommandParameter="{Binding Malzeme}">
+                        <Extensions:SplitButton.Content>
                             <StackPanel Orientation="Horizontal">
                                 <Image Width="32" Height="32">
                                     <Image.Source>
@@ -75,33 +78,43 @@
                                 </Image>
                                 <TextBlock Text="MALZEME RESMİ EKLE" VerticalAlignment="Center" />
                             </StackPanel>
-                        </Button.Content>
-                    </Button>
-                    <ComboBox ItemsSource="{Binding Mode=OneWay, Source={StaticResource Barcodes}}" SelectedItem="{Binding Malzeme.BarcodeFormat}" />
-                    <Button IsEnabled="{Binding Source, Converter={StaticResource NullableToBooleanConverter}, ElementName=Img}" Command="{Binding KareKodYazdır}" CommandParameter="{Binding ElementName=Img}">
-                        <StackPanel Orientation="Horizontal">
-                            <Image Width="32" Height="32">
-                                <Image.Source>
-                                    <MultiBinding Converter="{StaticResource SystemFileIconConverter}">
-                                        <Binding Source="Shell32.dll" />
-                                        <Binding Source="136" />
-                                    </MultiBinding>
-                                </Image.Source>
-                            </Image>
-                            <TextBlock Text="KOD YAZDIR" VerticalAlignment="Center" />
-                        </StackPanel>
-                    </Button>
-                    <Image x:Name="Img"
-                        Width="175" Height="175"
-                        Source="{Binding Malzeme.BarkodImage}">
+                        </Extensions:SplitButton.Content>
+                        <Extensions:SplitButton.InternalContent>
+                            <local:CameraUserControl Width="480" PropertyChanged="CameraUserControl_PropertyChanged" Height="360" />
+                        </Extensions:SplitButton.InternalContent>
+                    </Extensions:SplitButton>
+                    <Image Width="175" Height="175" Source="{Binding Malzeme.BarkodImage}">
                         <Image.ContextMenu>
                             <ContextMenu>
-                                <MenuItem Header="RESİM OLARAK SAKLA" Command="{Binding KareKodSakla, Mode=OneWay}" CommandParameter="{Binding Malzeme.BarkodImage}" />
+                                <MenuItem Header="RESİM OLARAK SAKLA" Command="{Binding KareKodSakla, Mode=OneWay}" CommandParameter="{Binding Malzeme.BarkodImage}">
+                                    <MenuItem.Icon>
+                                        <Image Width="16" Height="16">
+                                            <Image.Source>
+                                                <MultiBinding Converter="{StaticResource SystemFileIconConverter}">
+                                                    <Binding Source="Shell32.dll" />
+                                                    <Binding Source="122" />
+                                                </MultiBinding>
+                                            </Image.Source>
+                                        </Image>
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Header="KOD YAZDIR" Command="{Binding KareKodYazdır}" CommandParameter="{Binding Parent. PlacementTarget, RelativeSource={RelativeSource Mode=Self}}">
+                                    <MenuItem.Icon>
+                                        <Image Width="16" Height="16">
+                                            <Image.Source>
+                                                <MultiBinding Converter="{StaticResource SystemFileIconConverter}">
+                                                    <Binding Source="Shell32.dll" />
+                                                    <Binding Source="136" />
+                                                </MultiBinding>
+                                            </Image.Source>
+                                        </Image>
+                                    </MenuItem.Icon>
+                                </MenuItem>
                             </ContextMenu>
                         </Image.ContextMenu>
                     </Image>
                 </StackPanel>
-                <StackPanel Grid.Row="2">
+                <UniformGrid Grid.Row="2" Columns="2">
                     <Button Command="{Binding DepoyaEkle}" CommandParameter="{Binding Malzeme}">
                         <Button.Content>
                             <StackPanel Orientation="Horizontal">
@@ -128,11 +141,11 @@
                                         </MultiBinding>
                                     </Image.Source>
                                 </Image>
-                                <TextBlock Text="VERİLERİ YEDEKLE (RESİMLER HARİÇ)" VerticalAlignment="Center" />
+                                <TextBlock Text="VERİLERİ YEDEKLE&#x0a;(RESİMLER HARİÇ)" VerticalAlignment="Center" />
                             </StackPanel>
                         </Button.Content>
                     </Button>
-                </StackPanel>
+                </UniformGrid>
             </Grid>
         </GroupBox>
         <GroupBox Header="DEPO" Grid.Column="1">
@@ -158,14 +171,21 @@
                         </ListView.ItemContainerStyle>
                         <ListView.View>
                             <GridView>
-                                <GridViewColumn Header="RESİM" Width="40">
+                                <GridViewColumn Header="RESİM" Width="60">
                                     <GridViewColumn.CellTemplate>
                                         <DataTemplate>
-                                            <Image Cursor="Hand" Source="{Binding ResimYolu, Mode=OneWay, IsAsync=True, ConverterParameter='48', Converter={StaticResource DataImageFilePathImageUriConverter}}">
-                                                <Image.InputBindings>
-                                                    <MouseBinding Command="{Binding DataContext.DosyaÇalıştır, ElementName=grid}" CommandParameter="{Binding ResimYolu, Mode=OneWay}" MouseAction="LeftClick" />
-                                                </Image.InputBindings>
-                                            </Image>
+                                            <StackPanel Orientation="Horizontal">
+                                                <TextBlock VerticalAlignment="Center" FontSize="16" FontWeight="Bold">
+                                                    <Hyperlink Command="{Binding DataContext.MalzemeResimGüncelle, ElementName=grid}" CommandParameter="{Binding Mode=OneWay}" TextDecorations="None">
+                                                        <Run Text="+" />
+                                                    </Hyperlink>
+                                                </TextBlock>
+                                                <Image Cursor="Hand" Source="{Binding ResimYolu, Mode=OneWay, IsAsync=True, ConverterParameter='48', Converter={StaticResource DataImageFilePathImageUriConverter}}">
+                                                    <Image.InputBindings>
+                                                        <MouseBinding Command="{Binding DataContext.DosyaÇalıştır, ElementName=grid}" CommandParameter="{Binding ResimYolu, Mode=OneWay}" MouseAction="LeftClick" />
+                                                    </Image.InputBindings>
+                                                </Image>
+                                            </StackPanel>
                                         </DataTemplate>
                                     </GridViewColumn.CellTemplate>
                                 </GridViewColumn>
@@ -445,9 +465,7 @@
                                                     <DataTemplate>
                                                         <StackPanel IsEnabled="{Binding IadeEdildiMi, Converter={StaticResource ReverseBooleanConverter}}" Orientation="Horizontal">
                                                             <TextBox Text="{Binding Aciklama, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Width="50" ToolTip="Bir Açıklama Yazın." />
-                                                            <Extensions:NumericUpDownControl Maximum="{Binding SatisAdet}"
-                                                                Minimum="1" SmallChange="1"
-                                                                Value="{Binding IadeMiktari, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
+                                                            <Extensions:NumericUpDownControl Maximum="{Binding SatisAdet}" SmallChange="1" Value="{Binding IadeMiktari, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
                                                             <Button Content="İADE ET" Command="{Binding DataContext.MalzemeIadeEt, ElementName=grid}">
                                                                 <Button.CommandParameter>
                                                                     <MultiBinding Converter="{StaticResource CloneConverter}">

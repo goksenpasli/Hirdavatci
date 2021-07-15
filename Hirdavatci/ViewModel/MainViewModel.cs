@@ -48,13 +48,16 @@ namespace Hirdavatci
             {
                 if (parameter is Malzeme dc)
                 {
-                    OpenFileDialog openFileDialog = new() { Multiselect = false, Filter = "Resim Dosyaları (*.jpg;*.jpeg;*.tif;*.tiff;*.png)|*.jpg;*.jpeg;*.tif;*.tiff;*.png" };
-                    if (openFileDialog.ShowDialog() == true)
-                    {
-                        string filename = Guid.NewGuid() + Path.GetExtension(openFileDialog.FileName);
-                        File.Copy(openFileDialog.FileName, $"{Path.GetDirectoryName(ExtensionMethods.xmldatapath)}\\{filename}");
-                        dc.ResimYolu = filename;
-                    }
+                    ResimEkle(dc);
+                }
+            }, parameter => true);
+
+            MalzemeResimGüncelle = new RelayCommand<object>(parameter =>
+            {
+                if (parameter is Malzeme dc)
+                {
+                    ResimEkle(dc);
+                    Malzemeler.Serialize();
                 }
             }, parameter => true);
 
@@ -83,7 +86,7 @@ namespace Hirdavatci
                     (dc[1] as Malzeme).KalanAdet += (dc[0] as Satis).IadeMiktari;
                     Malzemeler.Serialize();
                 }
-            }, parameter => parameter is object[] dc && !string.IsNullOrWhiteSpace((dc[0] as Satis)?.Aciklama) && (dc[0] as Satis)?.IadeEdildiMi == false);
+            }, parameter => parameter is object[] dc && !string.IsNullOrWhiteSpace((dc[0] as Satis)?.Aciklama) && (dc[0] as Satis)?.IadeEdildiMi == false && (dc[0] as Satis)?.IadeMiktari > 0);
 
             DepoyaYeniMalzemeEkle = new RelayCommand<object>(parameter =>
             {
@@ -199,6 +202,8 @@ namespace Hirdavatci
 
         public Malzemeler Malzemeler { get; set; }
 
+        public ICommand MalzemeResimGüncelle { get; }
+
         public ICommand MalzemeResimYükle { get; }
 
         public ICommand SatışKaydıEkle { get; }
@@ -206,6 +211,17 @@ namespace Hirdavatci
         public Satis Satis { get; set; }
 
         public ICommand VerileriYedekle { get; }
+
+        private static void ResimEkle(Malzeme dc)
+        {
+            OpenFileDialog openFileDialog = new() { Multiselect = false, Filter = "Resim Dosyaları (*.jpg;*.jpeg;*.tif;*.tiff;*.png)|*.jpg;*.jpeg;*.tif;*.tiff;*.png" };
+            if (openFileDialog.ShowDialog() == true)
+            {
+                string filename = Guid.NewGuid() + Path.GetExtension(openFileDialog.FileName);
+                File.Copy(openFileDialog.FileName, $"{Path.GetDirectoryName(ExtensionMethods.xmldatapath)}\\{filename}");
+                dc.ResimYolu = filename;
+            }
+        }
 
         private void Malzeme_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
@@ -243,7 +259,7 @@ namespace Hirdavatci
 
             if (e.PropertyName == "SeçiliMalzeme")
             {
-                Satis.SatisFiyat = Malzeme.SeçiliMalzeme.BirimFiyat;
+                Satis.SatisFiyat = Malzeme.SeçiliMalzeme?.BirimFiyat ?? 0;
             }
         }
     }
