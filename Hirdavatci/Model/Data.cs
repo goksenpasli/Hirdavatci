@@ -85,6 +85,8 @@ namespace Hirdavatci
 
         private int kalanAdet;
 
+        private bool resimleriYedekle;
+
         private string resimYolu;
 
         private ObservableCollection<Satis> satislar = new();
@@ -239,6 +241,21 @@ namespace Hirdavatci
                 {
                     kalanAdet = value;
                     OnPropertyChanged(nameof(KalanAdet));
+                }
+            }
+        }
+
+        [XmlIgnore]
+        public bool ResimleriYedekle
+        {
+            get => resimleriYedekle;
+
+            set
+            {
+                if (resimleriYedekle != value)
+                {
+                    resimleriYedekle = value;
+                    OnPropertyChanged(nameof(ResimleriYedekle));
                 }
             }
         }

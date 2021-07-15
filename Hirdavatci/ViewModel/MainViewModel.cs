@@ -176,7 +176,18 @@ namespace Hirdavatci
                     CompressorViewModel compressorViewModel = new();
                     compressorViewModel.CompressorView.Dosyalar = new();
                     compressorViewModel.CompressorView.KayıtYolu = saveFileDialog.FileName;
-                    compressorViewModel.CompressorView.Dosyalar.Add(ExtensionMethods.xmldatapath);
+                    if (Malzeme.ResimleriYedekle)
+                    {
+                        compressorViewModel.CompressorView.SıkıştırmaDerecesi = 0;
+                        foreach (string item in Directory.GetFiles(Path.GetDirectoryName(ExtensionMethods.xmldatapath)))
+                        {
+                            compressorViewModel.CompressorView.Dosyalar.Add(item);
+                        }
+                    }
+                    else
+                    {
+                        compressorViewModel.CompressorView.Dosyalar.Add(ExtensionMethods.xmldatapath);
+                    }
                     compressorViewModel.Compress();
                 }
             }, parameter => true);

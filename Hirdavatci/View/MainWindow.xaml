@@ -80,7 +80,7 @@
                             </StackPanel>
                         </Extensions:SplitButton.Content>
                         <Extensions:SplitButton.InternalContent>
-                            <local:CameraUserControl Width="480" PropertyChanged="CameraUserControl_PropertyChanged" Height="360" />
+                            <local:CameraUserControl Width="480" Height="360" PropertyChanged="CameraUserControl_PropertyChanged" />
                         </Extensions:SplitButton.InternalContent>
                     </Extensions:SplitButton>
                     <Image Width="175" Height="175" Source="{Binding Malzeme.BarkodImage}">
@@ -130,8 +130,8 @@
                             </StackPanel>
                         </Button.Content>
                     </Button>
-                    <Button Command="{Binding VerileriYedekle}" IsTabStop="False">
-                        <Button.Content>
+                    <Extensions:SplitButton Command="{Binding VerileriYedekle}" IsTabStop="False" PlacementMode="Top">
+                        <Extensions:SplitButton.Content>
                             <StackPanel Orientation="Horizontal">
                                 <Image Width="32" Height="32">
                                     <Image.Source>
@@ -141,10 +141,15 @@
                                         </MultiBinding>
                                     </Image.Source>
                                 </Image>
-                                <TextBlock Text="VERİLERİ YEDEKLE&#x0a;(RESİMLER HARİÇ)" VerticalAlignment="Center" />
+                                <TextBlock Text="VERİLERİ YEDEKLE" VerticalAlignment="Center" />
                             </StackPanel>
-                        </Button.Content>
-                    </Button>
+                        </Extensions:SplitButton.Content>
+                        <Extensions:SplitButton.InternalContent>
+                            <GroupBox Header="RESİM AYARI">
+                                <CheckBox Content="RESİMLERİ DAHİL ET" IsChecked="{Binding Malzeme.ResimleriYedekle}" />
+                            </GroupBox>
+                        </Extensions:SplitButton.InternalContent>
+                    </Extensions:SplitButton>
                 </UniformGrid>
             </Grid>
         </GroupBox>
