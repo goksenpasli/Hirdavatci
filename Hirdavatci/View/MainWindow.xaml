@@ -197,16 +197,29 @@
         </GroupBox>
         <GroupBox Grid.Column="1">
             <GroupBox.Header>
-                <StackPanel Orientation="Horizontal">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
                     <TextBlock Text="DEPO" VerticalAlignment="Center" />
-                    <Button Grid.Column="2" Command="{Binding CsvDosyasınaYaz, Mode=OneWay}" CommandParameter="{Binding Malzemeler.Malzeme}">
-                        <Image Width="16" Height="16">
-                            <Image.Source>
-                                <Binding Converter="{StaticResource FilePathToIconConverter}" Source=".csv" />
-                            </Image.Source>
-                        </Image>
-                    </Button>
-                </StackPanel>
+                    <StackPanel Grid.Column="1" HorizontalAlignment="Right" Orientation="Horizontal">
+                        <Button Command="{Binding CsvDosyasınaYaz, Mode=OneWay}" CommandParameter="{Binding Malzemeler.Malzeme}" ToolTip="Excele Ver">
+                            <Image Width="16" Height="16">
+                                <Image.Source>
+                                    <Binding Converter="{StaticResource FilePathToIconConverter}" Source=".csv" />
+                                </Image.Source>
+                            </Image>
+                        </Button>
+                        <Button Command="{Binding CsvDosyasındanVeriAl, Mode=OneWay}" ToolTip="Excelden Al">
+                            <Image Width="16" Height="16">
+                                <Image.Source>
+                                    <Binding Converter="{StaticResource FilePathToIconConverter}" Source=".csv" />
+                                </Image.Source>
+                            </Image>
+                        </Button>
+                    </StackPanel>
+                </Grid>
             </GroupBox.Header>
             <Grid>
                 <Grid.RowDefinitions>

@@ -67,7 +67,27 @@ namespace Hirdavatci
                     {
                         File.AppendAllText(dosyaismi, $"{item.Aciklama}{seperator}{item.Barkod}{seperator}{item.BirimFiyat}{seperator}{item.ToplamAdet}{seperator}{item.KalanAdet}\n", Encoding.UTF8);
                     }
-                    Process.Start(dosyaismi);
+                    _ = Process.Start(dosyaismi);
+                }
+            }, parameter => true);
+
+            CsvDosyasındanVeriAl = new RelayCommand<object>(parameter =>
+            {
+                _ = MessageBox.Show("Malzeme Adı\nBarkod\nBirimFiyat\nToplamAdet\nKalanAdet\n\nSıralamasıyla Dosyada Başlık Satırlarını Silmeden Verileri İşleyin.\nMicrosoft Excel Virgülle Ayrılmış Değerler Dosyası (*.csv) Olarak Kaydedip Yükleyin.", "HIRDAVATÇI", MessageBoxButton.OK, MessageBoxImage.Information);
+                OpenFileDialog openFileDialog = new()
+                {
+                    Filter = "Csv Dosyası |*.csv"
+                };
+                if (openFileDialog.ShowDialog() == true)
+                {
+                    if (openFileDialog.FileName.ExceldenVeriAl() != null)
+                    {
+                        foreach (Malzeme item in openFileDialog.FileName.ExceldenVeriAl())
+                        {
+                            Malzemeler.Malzeme.Add(item);
+                        }
+                    }
+                    Malzemeler.Serialize();
                 }
             }, parameter => true);
 
@@ -224,6 +244,8 @@ namespace Hirdavatci
         public ICommand AyarKaydet { get; }
 
         public ICommand CsvDosyasınaYaz { get; }
+
+        public ICommand CsvDosyasındanVeriAl { get; }
 
         public ICommand DepoyaEkle { get; }
 

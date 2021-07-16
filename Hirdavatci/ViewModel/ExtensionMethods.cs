@@ -2,10 +2,15 @@
 using SharpCompress.Common;
 using SharpCompress.Writers;
 using SharpCompress.Writers.Zip;
+using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Configuration;
 using System.Drawing.Imaging;
+using System.Globalization;
 using System.IO;
+using System.Linq;
+using System.Text;
 using System.Windows.Media.Imaging;
 using System.Xml.Serialization;
 using ZXing;
@@ -23,6 +28,32 @@ namespace Hirdavatci
             foreach (string dosya in compressorViewModel.CompressorView.Dosyalar)
             {
                 writer.Write(Path.GetFileName(dosya), dosya);
+            }
+        }
+
+        public static IEnumerable<Malzeme> ExceldenVeriAl(this string dosyayolu)
+        {
+            try
+            {
+                string[] satırlar = File.ReadAllLines(dosyayolu, Encoding.Default);
+                CultureInfo culture = new(CultureInfo.CurrentCulture.Name);
+                return satırlar.Skip(1).Select(satır =>
+                {
+                    string[] dc = satır.Split(culture.TextInfo.ListSeparator.ToCharArray());
+                    return new Malzeme
+                    {
+                        Id = new Random(Guid.NewGuid().GetHashCode()).Next(1, int.MaxValue),
+                        ToplamAdet = Convert.ToInt32(dc[3]),
+                        BirimFiyat = Convert.ToDouble(dc[2]),
+                        Aciklama = dc[0],
+                        Barkod = dc[1],
+                        KalanAdet = Convert.ToInt32(dc[4]),
+                    };
+                });
+            }
+            catch (Exception)
+            {
+                return null;
             }
         }
 
