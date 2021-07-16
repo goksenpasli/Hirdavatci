@@ -195,7 +195,19 @@
                 </UniformGrid>
             </Grid>
         </GroupBox>
-        <GroupBox Header="DEPO" Grid.Column="1">
+        <GroupBox Grid.Column="1">
+            <GroupBox.Header>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="DEPO" VerticalAlignment="Center" />
+                    <Button Grid.Column="2" Command="{Binding CsvDosyasınaYaz, Mode=OneWay}" CommandParameter="{Binding Malzemeler.Malzeme}">
+                        <Image Width="16" Height="16">
+                            <Image.Source>
+                                <Binding Converter="{StaticResource FilePathToIconConverter}" Source=".csv" />
+                            </Image.Source>
+                        </Image>
+                    </Button>
+                </StackPanel>
+            </GroupBox.Header>
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="2*" />

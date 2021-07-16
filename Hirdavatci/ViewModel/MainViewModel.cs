@@ -1,9 +1,12 @@
 ﻿using Extensions;
 using Microsoft.Win32;
 using System;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -50,6 +53,21 @@ namespace Hirdavatci
                 if (parameter is Malzeme dc)
                 {
                     ResimEkle(dc);
+                }
+            }, parameter => true);
+
+            CsvDosyasınaYaz = new RelayCommand<object>(parameter =>
+            {
+                if (parameter is ObservableCollection<Malzeme> data)
+                {
+                    string dosyaismi = Path.GetTempPath() + Guid.NewGuid() + ".csv";
+                    string seperator = new CultureInfo(CultureInfo.CurrentCulture.Name).TextInfo.ListSeparator;
+                    File.AppendAllText(dosyaismi, $"MalzemeAdı{seperator}Karekod{seperator}Fiyat{seperator}Toplam Adet{seperator}Kalan Adet\n", Encoding.UTF8);
+                    foreach (Malzeme item in data)
+                    {
+                        File.AppendAllText(dosyaismi, $"{item.Aciklama}{seperator}{item.Barkod}{seperator}{item.BirimFiyat}{seperator}{item.ToplamAdet}{seperator}{item.KalanAdet}\n", Encoding.UTF8);
+                    }
+                    Process.Start(dosyaismi);
                 }
             }, parameter => true);
 
@@ -204,6 +222,8 @@ namespace Hirdavatci
         }
 
         public ICommand AyarKaydet { get; }
+
+        public ICommand CsvDosyasınaYaz { get; }
 
         public ICommand DepoyaEkle { get; }
 
