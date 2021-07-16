@@ -37,7 +37,8 @@ namespace Hirdavatci
                         Aciklama = dc.Aciklama,
                         Barkod = dc.Barkod,
                         KalanAdet = dc.ToplamAdet,
-                        ResimYolu = dc.ResimYolu
+                        ResimYolu = dc.ResimYolu,
+                        MalzemeAlimTarihi = dc.MalzemeAlimTarihi
                     };
                     Malzemeler.Malzeme.Add(malzeme);
                     Malzemeler.Serialize();

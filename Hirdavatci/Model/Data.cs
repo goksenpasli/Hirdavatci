@@ -85,6 +85,8 @@ namespace Hirdavatci
 
         private int kalanAdet;
 
+        private DateTime malzemeAlimTarihi = DateTime.Today;
+
         private bool resimleriYedekle;
 
         private string resimYolu;
@@ -241,6 +243,21 @@ namespace Hirdavatci
                 {
                     kalanAdet = value;
                     OnPropertyChanged(nameof(KalanAdet));
+                }
+            }
+        }
+
+        [XmlAttribute(AttributeName = "MalzemeAlimTarihi")]
+        public DateTime MalzemeAlimTarihi
+        {
+            get => malzemeAlimTarihi;
+
+            set
+            {
+                if (malzemeAlimTarihi != value)
+                {
+                    malzemeAlimTarihi = value;
+                    OnPropertyChanged(nameof(MalzemeAlimTarihi));
                 }
             }
         }

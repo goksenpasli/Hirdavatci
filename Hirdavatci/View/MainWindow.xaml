@@ -12,7 +12,7 @@
     UseLayoutRounding="True" WindowStartupLocation="CenterScreen" WindowState="Maximized"
     mc:Ignorable="d">
     <Window.Resources>
-        <local:MalzemeValueToProgressBarColorConverter x:Key="MalzemeValueToProgressBarColorConverter"/>
+        <local:MalzemeValueToProgressBarColorConverter x:Key="MalzemeValueToProgressBarColorConverter" />
         <Extensions:ReverseBooleanConverter x:Key="ReverseBooleanConverter" />
         <Extensions:NullableToBooleanConverter x:Key="NullableToBooleanConverter" />
         <Extensions:StringNullableToBooleanConverter x:Key="StringNullableToBooleanConverter" />
@@ -61,6 +61,9 @@
                             Orientation="Horizontal" SmallChange="1"
                             Value="{Binding Malzeme.ToplamAdet, UpdateSourceTrigger=PropertyChanged}" />
                     </HeaderedContentControl>
+                    <HeaderedContentControl Header="MALZEME ALIM TARİHİ">
+                        <DatePicker IsEnabled="False" SelectedDate="{Binding Malzeme.MalzemeAlimTarihi, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    </HeaderedContentControl>
                     <Extensions:SplitButton HorizontalContentAlignment="Stretch" Command="{Binding MalzemeResimYükle, Mode=OneWay}" CommandParameter="{Binding Malzeme}">
                         <Extensions:SplitButton.Content>
                             <StackPanel Orientation="Horizontal">
@@ -97,7 +100,8 @@
                                 <TextBox Text="{Binding Malzeme.Barkod, UpdateSourceTrigger=PropertyChanged}" />
                             </HeaderedContentControl>
                             <Slider Grid.Row="1"
-                                AutoToolTipPlacement="TopLeft" Maximum="175" Orientation="Vertical" SmallChange="1"
+                                AutoToolTipPlacement="TopLeft" IsSnapToTickEnabled="True" Maximum="175" Minimum="1"
+                                Orientation="Vertical" SmallChange="1"
                                 Value="{Binding QrHeight, Source={x:Static properties:Settings.Default}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                             <Viewbox Grid.Row="1" Grid.Column="1"
                                 Width="{Binding QrWidth, Source={x:Static properties:Settings.Default}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
@@ -134,7 +138,8 @@
                                 </Image>
                             </Viewbox>
                             <Slider Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2"
-                                AutoToolTipPlacement="TopLeft" Maximum="350" SmallChange="1"
+                                AutoToolTipPlacement="TopLeft" IsSnapToTickEnabled="True" Maximum="350" Minimum="1"
+                                SmallChange="1"
                                 Value="{Binding QrWidth, Source={x:Static properties:Settings.Default}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                             <Button Grid.Row="2" Command="{Binding AyarKaydet}" ToolTip="Ayar Kaydet">
                                 <Image Width="16" Height="16">
@@ -193,8 +198,8 @@
         <GroupBox Header="DEPO" Grid.Column="1">
             <Grid>
                 <Grid.RowDefinitions>
-                    <RowDefinition />
-                    <RowDefinition />
+                    <RowDefinition Height="2*" />
+                    <RowDefinition Height="3*" />
                 </Grid.RowDefinitions>
                 <GroupBox Header="DEPO DURUMU" Grid.Row="0">
                     <ListView ItemsSource="{Binding Mode=OneWay, Source={StaticResource CvsMalzemeler}}"
@@ -374,16 +379,17 @@
                                     <RowDefinition />
                                     <RowDefinition Height="Auto" />
                                 </Grid.RowDefinitions>
-                                <ProgressBar Grid.RowSpan="2" Foreground="{Binding Malzeme.SeçiliMalzeme, Converter={StaticResource MalzemeValueToProgressBarColorConverter}}"
+                                <ProgressBar Grid.RowSpan="2"
                                     Width="16"
+                                    Foreground="{Binding Malzeme.SeçiliMalzeme, Converter={StaticResource MalzemeValueToProgressBarColorConverter}}"
                                     Style="{Binding Mode=OneWay, Source={StaticResource ProgressBarStyle}}"
                                     Maximum="{Binding Malzeme.SeçiliMalzeme.ToplamAdet}"
                                     Orientation="Vertical"
                                     Value="{Binding Malzeme.SeçiliMalzeme.KalanAdet}" />
                                 <Image Grid.Column="1" Grid.RowSpan="2"
-                                    Width="225"
+                                    Width="275"
                                     Margin="3"
-                                    Source="{Binding Malzeme.SeçiliMalzeme.ResimYolu, Mode=OneWay, ConverterParameter='225', Converter={StaticResource DataImageFilePathImageUriConverter}}" />
+                                    Source="{Binding Malzeme.SeçiliMalzeme.ResimYolu, Mode=OneWay, ConverterParameter='275', Converter={StaticResource DataImageFilePathImageUriConverter}}" />
                                 <ScrollViewer Grid.Column="2" VerticalScrollBarVisibility="Auto">
                                     <GroupBox Header="SATIŞ BİLGİLERİ">
                                         <StackPanel>
@@ -406,7 +412,7 @@
                                                     Value="{Binding Satis.SatisFiyat, UpdateSourceTrigger=PropertyChanged}" />
                                             </HeaderedContentControl>
                                             <HeaderedContentControl Header="SATIŞ TARİHİ">
-                                                <DatePicker IsEnabled="False" SelectedDate="{Binding Satis.Tarih, UpdateSourceTrigger=PropertyChanged}" />
+                                                <DatePicker IsEnabled="False" SelectedDate="{Binding Satis.Tarih, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
                                             </HeaderedContentControl>
                                         </StackPanel>
                                     </GroupBox>
