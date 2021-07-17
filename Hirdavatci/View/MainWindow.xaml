@@ -23,7 +23,7 @@
         <Style TargetType="{x:Type HeaderedContentControl}">
             <Setter Property="IsTabStop" Value="False" />
         </Style>
-        <CollectionViewSource x:Key="Cvs" d:DesignSource="{d:DesignInstance CreateList=True, Type={x:Type local:Satis}}" Source="{Binding Malzeme.SeçiliMalzeme.Satislar}">
+        <CollectionViewSource x:Key="CvsSatış" d:DesignSource="{d:DesignInstance CreateList=True, Type={x:Type local:Satis}}" Source="{Binding Malzeme.SeçiliMalzeme.Satislar}">
             <CollectionViewSource.GroupDescriptions>
                 <PropertyGroupDescription PropertyName="Tarih" />
             </CollectionViewSource.GroupDescriptions>
@@ -93,7 +93,7 @@
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition />
                                 <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto" />
                             </Grid.RowDefinitions>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto" />
@@ -157,7 +157,9 @@
                                     </Image.Source>
                                 </Image>
                             </Button>
-                            <TextBlock Grid.Row="3" Grid.ColumnSpan="2" Text="{Binding Malzeme.BarkodError}" Foreground="Red"/>
+                            <TextBlock Text="{Binding Malzeme.BarkodError}"
+                                Grid.Row="3" Grid.ColumnSpan="2"
+                                Foreground="Red" />
                         </Grid>
                     </GroupBox>
                 </StackPanel>
@@ -511,7 +513,7 @@
                                     <ColumnDefinition />
                                 </Grid.ColumnDefinitions>
                                 <ListView x:Name="LvSatislar"
-                                    ItemsSource="{Binding Mode=OneWay, Source={StaticResource Cvs}}"
+                                    ItemsSource="{Binding Mode=OneWay, Source={StaticResource CvsSatış}}"
                                     Extensions:GridViewSort.AutoSort="True" VirtualizingPanel.IsVirtualizingWhenGrouping="True">
                                     <ListView.GroupStyle>
                                         <GroupStyle>
@@ -547,10 +549,27 @@
                                     </ListView.ItemContainerStyle>
                                     <ListView.View>
                                         <GridView>
-                                            <GridViewColumn Header="SATIN ALAN&#x0a;KİŞİ"
-                                                Width="100"
-                                                Extensions:GridViewSort.PropertyName="SatinAlanKisi"
-                                                DisplayMemberBinding="{Binding SatinAlanKisi}" />
+                                            <GridViewColumn Width="140" Extensions:GridViewSort.PropertyName="SatinAlanKisi" DisplayMemberBinding="{Binding SatinAlanKisi}">
+                                                <GridViewColumn.HeaderTemplate>
+                                                    <DataTemplate>
+                                                        <UniformGrid Columns="2">
+                                                            <TextBox Text="{Binding DataContext.Satis.KişiAramaMetni, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, RelativeSource={RelativeSource AncestorType=ListView}}" Width="65" VerticalContentAlignment="Center">
+                                                                <TextBox.Style>
+                                                                    <Style TargetType="TextBox">
+                                                                        <Style.Triggers>
+                                                                            <DataTrigger Binding="{Binding DataContext.Satis.KişiAramaMetni, Converter={StaticResource StringNullableToBooleanConverter}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, RelativeSource={RelativeSource AncestorType=ListView}}" Value="true">
+                                                                                <Setter Property="BorderBrush" Value="Green" />
+                                                                                <Setter Property="BorderThickness" Value="2" />
+                                                                            </DataTrigger>
+                                                                        </Style.Triggers>
+                                                                    </Style>
+                                                                </TextBox.Style>
+                                                            </TextBox>
+                                                            <TextBlock Text="SATIN ALAN&#x0a;KİŞİ" VerticalAlignment="Center" />
+                                                        </UniformGrid>
+                                                    </DataTemplate>
+                                                </GridViewColumn.HeaderTemplate>
+                                            </GridViewColumn>
                                             <GridViewColumn Header="TELEFON" Width="100" Extensions:GridViewSort.PropertyName="Telefon">
                                                 <GridViewColumn.CellTemplate>
                                                     <DataTemplate>
@@ -619,12 +638,28 @@
                                             <GridView>
                                                 <GridViewColumn Header="SIRA" DisplayMemberBinding="{Binding TaksitSira}" />
                                                 <GridViewColumn Header="VADE" DisplayMemberBinding="{Binding Vade, StringFormat=\{0:d\}}" />
-                                                <GridViewColumn Header="ÖDEME&#x0a;TARİHİ" DisplayMemberBinding="{Binding TaksitOdenmeTarihi, StringFormat=\{0:d\}}" />
+                                                <GridViewColumn Header="ÖDEME&#x0a;TARİHİ">
+                                                    <GridViewColumn.CellTemplate>
+                                                        <DataTemplate>
+                                                            <TextBlock Text="{Binding TaksitOdenmeTarihi, StringFormat=\{0:d\}}">
+                                                                <TextBlock.Style>
+                                                                    <Style TargetType="TextBlock">
+                                                                        <Style.Triggers>
+                                                                            <DataTrigger Binding="{Binding TaksitOdenmeTarihi}" Value="1.01.0001">
+                                                                                <Setter Property="Visibility" Value="Collapsed" />
+                                                                            </DataTrigger>
+                                                                        </Style.Triggers>
+                                                                    </Style>
+                                                                </TextBlock.Style>
+                                                            </TextBlock>
+                                                        </DataTemplate>
+                                                    </GridViewColumn.CellTemplate>
+                                                </GridViewColumn>
                                                 <GridViewColumn Header="TUTAR" DisplayMemberBinding="{Binding TaksitTutar, StringFormat=\{0:C\}}" />
                                                 <GridViewColumn Header="ÖDENEN">
                                                     <GridViewColumn.CellTemplate>
                                                         <DataTemplate>
-                                                            <Extensions:NumericUpDownControl CurrencyMode="True"
+                                                            <Extensions:NumericUpDownControl CurrencyMode="True" 
                                                                 Maximum="{x:Static system:Double.MaxValue}"
                                                                 Orientation="Vertical"
                                                                 Value="{Binding OdenenTutar, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />

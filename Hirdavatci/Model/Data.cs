@@ -398,6 +398,8 @@ namespace Hirdavatci
 
         private int ıd;
 
+        private string kişiAramaMetni;
+
         private string satinAlanKisi;
 
         private int satisAdet = 1;
@@ -485,6 +487,21 @@ namespace Hirdavatci
                 {
                     ıd = value;
                     OnPropertyChanged(nameof(Id));
+                }
+            }
+        }
+
+        [XmlIgnore]
+        public string KişiAramaMetni
+        {
+            get => kişiAramaMetni;
+
+            set
+            {
+                if (kişiAramaMetni != value)
+                {
+                    kişiAramaMetni = value;
+                    OnPropertyChanged(nameof(KişiAramaMetni));
                 }
             }
         }

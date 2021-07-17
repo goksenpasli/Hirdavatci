@@ -19,6 +19,8 @@ namespace Hirdavatci
     {
         private readonly CollectionViewSource CvsMalzemeler = (CollectionViewSource)Application.Current?.MainWindow?.TryFindResource("CvsMalzemeler");
 
+        private readonly CollectionViewSource CvsSatış = (CollectionViewSource)Application.Current?.MainWindow?.TryFindResource("CvsSatış");
+
         public MainViewModel()
         {
             Malzeme = new Malzeme();
@@ -194,18 +196,7 @@ namespace Hirdavatci
 
                     if (Satis.SatisTipi == SatisTipi.TAKSİTLİ)
                     {
-                        for (int i = 0; i < Taksit.TaksitSayisi; i++)
-                        {
-                            Taksit taksit = new()
-                            {
-                                Id = Taksit.Id = new Random(Guid.NewGuid().GetHashCode()).Next(1, int.MaxValue),
-                                TaksitSira = i + 1,
-                                TaksitBitti = false,
-                                TaksitTutar = Math.Round(Satis.SatisAdet * Satis.SatisFiyat / Taksit.TaksitSayisi, 2),
-                            };
-                            taksit.Vade = Taksit.BaşlangıçVade.AddMonths(Taksit.ÖdemeAyı * i);
-                            satis.Taksitler.Taksit.Add(taksit);
-                        }
+                        TaksitliSatışYap(satis, Taksit.TaksitSayisi, Taksit.ÖdemeAyı);
                     }
 
                     dc.KalanAdet -= Satis.SatisAdet;
@@ -227,7 +218,7 @@ namespace Hirdavatci
             {
                 if (parameter is Taksit taksit)
                 {
-                    if (taksit.OdenenTutar >= taksit.TaksitTutar)
+                    if (Math.Round(taksit.OdenenTutar, 2) >= taksit.TaksitTutar)
                     {
                         taksit.TaksitBitti = true;
                         taksit.TaksitOdenmeTarihi = DateTime.Today;
@@ -271,7 +262,7 @@ namespace Hirdavatci
             }, parameter => true);
 
             Malzeme.PropertyChanged += Malzeme_PropertyChanged;
-
+            Satis.PropertyChanged += Satis_PropertyChanged;
             Properties.Settings.Default.PropertyChanged += Default_PropertyChanged;
         }
 
@@ -351,6 +342,30 @@ namespace Hirdavatci
             if (e.PropertyName == "SeçiliMalzeme")
             {
                 Satis.SatisFiyat = Malzeme.SeçiliMalzeme?.BirimFiyat ?? 0;
+            }
+        }
+
+        private void Satis_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "KişiAramaMetni")
+            {
+                CvsSatış.Filter += (s, e) => e.Accepted = e.Item is Satis satis && satis.SatinAlanKisi.Contains(Satis.KişiAramaMetni);
+            }
+        }
+
+        private void TaksitliSatışYap(Satis satis, int taksitsayısı, int ödemeAyı)
+        {
+            for (int i = 0; i < taksitsayısı; i++)
+            {
+                Taksit taksit = new()
+                {
+                    Id = Taksit.Id = new Random(Guid.NewGuid().GetHashCode()).Next(1, int.MaxValue),
+                    TaksitSira = i + 1,
+                    TaksitBitti = false,
+                    TaksitTutar = Math.Round(Satis.SatisAdet * Satis.SatisFiyat / taksitsayısı, 2),
+                };
+                taksit.Vade = Taksit.BaşlangıçVade.AddMonths(ödemeAyı * i);
+                satis.Taksitler.Taksit.Add(taksit);
             }
         }
     }
