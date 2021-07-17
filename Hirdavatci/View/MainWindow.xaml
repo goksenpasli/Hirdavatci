@@ -34,6 +34,11 @@
                 <x:Type TypeName="zxing:BarcodeFormat" />
             </ObjectDataProvider.MethodParameters>
         </ObjectDataProvider>
+        <ObjectDataProvider x:Key="SatisTipi" MethodName="GetValues" ObjectType="{x:Type system:Enum}">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="local:SatisTipi" />
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
     </Window.Resources>
     <Grid x:Name="grid">
         <Grid.ColumnDefinitions>
@@ -88,6 +93,7 @@
                                 <RowDefinition Height="Auto" />
                                 <RowDefinition />
                                 <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto"/>
                             </Grid.RowDefinitions>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto" />
@@ -137,7 +143,7 @@
                                     </Image.ContextMenu>
                                 </Image>
                             </Viewbox>
-                            <Slider Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2"
+                            <Slider Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2"
                                 AutoToolTipPlacement="TopLeft" IsSnapToTickEnabled="True" Maximum="350" Minimum="1"
                                 SmallChange="1"
                                 Value="{Binding QrWidth, Source={x:Static properties:Settings.Default}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
@@ -151,6 +157,7 @@
                                     </Image.Source>
                                 </Image>
                             </Button>
+                            <TextBlock Grid.Row="3" Grid.ColumnSpan="2" Text="{Binding Malzeme.BarkodError}" Foreground="Red"/>
                         </Grid>
                     </GroupBox>
                 </StackPanel>
@@ -293,7 +300,7 @@
                                                 <Extensions:ContentToggleButton.Content>
                                                     <StackPanel>
                                                         <Viewbox Width="{Binding QrWidth, Source={x:Static properties:Settings.Default}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Height="{Binding QrHeight, Source={x:Static properties:Settings.Default}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                                                            <Image x:Name="Img" Source="{Binding Barkod, Converter={StaticResource BarcodeToImageConverter}}" />
+                                                            <Image x:Name="Img" Source="{Binding Mode=OneWay, Converter={StaticResource BarcodeToImageConverter}}" />
                                                         </Viewbox>
                                                         <Button Command="{Binding DataContext.KareKodYazdır, ElementName=grid}" CommandParameter="{Binding ElementName=Img}">
                                                             <StackPanel Orientation="Horizontal">
@@ -427,7 +434,7 @@
                                             </HeaderedContentControl>
                                             <HeaderedContentControl Header="ADET">
                                                 <Extensions:NumericUpDownControl Maximum="{x:Static system:Double.MaxValue}"
-                                                    Orientation="Horizontal" SmallChange="1"
+                                                    Minimum="1" Orientation="Horizontal" SmallChange="1"
                                                     Value="{Binding Satis.SatisAdet, UpdateSourceTrigger=PropertyChanged}" />
                                             </HeaderedContentControl>
                                             <HeaderedContentControl Header="SATIŞ FİYATI">
@@ -439,6 +446,42 @@
                                             <HeaderedContentControl Header="SATIŞ TARİHİ">
                                                 <DatePicker IsEnabled="False" SelectedDate="{Binding Satis.Tarih, UpdateSourceTrigger=PropertyChanged, Mode=TwoWay}" />
                                             </HeaderedContentControl>
+                                            <GroupBox Header="TAKSİTLİ SATIŞ">
+                                                <StackPanel>
+                                                    <ComboBox x:Name="Cb"
+                                                        ItemsSource="{Binding Mode=OneWay, Source={StaticResource SatisTipi}}"
+                                                        SelectedIndex="0"
+                                                        SelectedItem="{Binding Satis.SatisTipi}" />
+                                                    <StackPanel>
+                                                        <StackPanel.Style>
+                                                            <Style TargetType="StackPanel">
+                                                                <Setter Property="IsEnabled" Value="True" />
+                                                                <Style.Triggers>
+                                                                    <DataTrigger Binding="{Binding ElementName=Cb, Path=SelectedItem}" Value="PEŞİN">
+                                                                        <Setter Property="IsEnabled" Value="False" />
+                                                                    </DataTrigger>
+                                                                </Style.Triggers>
+                                                            </Style>
+                                                        </StackPanel.Style>
+                                                        <HeaderedContentControl Header="VADE TARİHİ">
+                                                            <DatePicker SelectedDate="{Binding Taksit.BaşlangıçVade, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                                        </HeaderedContentControl>
+                                                        <HeaderedContentControl Header="TAKSİT SAYISI">
+                                                            <Extensions:NumericUpDownControl Maximum="24" Minimum="2" SmallChange="1"
+                                                                Value="{Binding Taksit.TaksitSayisi, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                                        </HeaderedContentControl>
+                                                        <HeaderedContentControl Header="ÖDEME TİPİ">
+                                                            <ComboBox ItemsSource="{Binding Taksit.ÖdemeAyListesi}" SelectedItem="{Binding Taksit.ÖdemeAyı}">
+                                                                <ComboBox.ItemTemplate>
+                                                                    <DataTemplate>
+                                                                        <TextBlock Text="{Binding Mode=OneWay, StringFormat={}{0} Ayda Bir}" />
+                                                                    </DataTemplate>
+                                                                </ComboBox.ItemTemplate>
+                                                            </ComboBox>
+                                                        </HeaderedContentControl>
+                                                    </StackPanel>
+                                                </StackPanel>
+                                            </GroupBox>
                                         </StackPanel>
                                     </GroupBox>
                                 </ScrollViewer>
@@ -463,6 +506,10 @@
                         </TabItem>
                         <TabItem Header="SATIŞLAR">
                             <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="2*" />
+                                    <ColumnDefinition />
+                                </Grid.ColumnDefinitions>
                                 <ListView x:Name="LvSatislar"
                                     ItemsSource="{Binding Mode=OneWay, Source={StaticResource Cvs}}"
                                     Extensions:GridViewSort.AutoSort="True" VirtualizingPanel.IsVirtualizingWhenGrouping="True">
@@ -556,6 +603,45 @@
                                         </GridView>
                                     </ListView.View>
                                 </ListView>
+                                <GroupBox Header="TAKSİT DURUMU" Grid.Column="1">
+                                    <ListView ItemsSource="{Binding Path=SelectedItem.Taksitler.Taksit, Mode=OneWay, ElementName=LvSatislar}">
+                                        <ListView.ItemContainerStyle>
+                                            <Style TargetType="ListViewItem">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding TaksitBitti}" Value="true">
+                                                        <Setter Property="Background" Value="LightGreen" />
+                                                        <Setter Property="IsEnabled" Value="False" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </ListView.ItemContainerStyle>
+                                        <ListView.View>
+                                            <GridView>
+                                                <GridViewColumn Header="SIRA" DisplayMemberBinding="{Binding TaksitSira}" />
+                                                <GridViewColumn Header="VADE" DisplayMemberBinding="{Binding Vade, StringFormat=\{0:d\}}" />
+                                                <GridViewColumn Header="ÖDEME&#x0a;TARİHİ" DisplayMemberBinding="{Binding TaksitOdenmeTarihi, StringFormat=\{0:d\}}" />
+                                                <GridViewColumn Header="TUTAR" DisplayMemberBinding="{Binding TaksitTutar, StringFormat=\{0:C\}}" />
+                                                <GridViewColumn Header="ÖDENEN">
+                                                    <GridViewColumn.CellTemplate>
+                                                        <DataTemplate>
+                                                            <Extensions:NumericUpDownControl CurrencyMode="True"
+                                                                Maximum="{x:Static system:Double.MaxValue}"
+                                                                Orientation="Vertical"
+                                                                Value="{Binding OdenenTutar, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                                        </DataTemplate>
+                                                    </GridViewColumn.CellTemplate>
+                                                </GridViewColumn>
+                                                <GridViewColumn>
+                                                    <GridViewColumn.CellTemplate>
+                                                        <DataTemplate>
+                                                            <Button Content="İŞLE" Command="{Binding DataContext.TaksitKapat, ElementName=grid}" CommandParameter="{Binding Mode=OneWay}" />
+                                                        </DataTemplate>
+                                                    </GridViewColumn.CellTemplate>
+                                                </GridViewColumn>
+                                            </GridView>
+                                        </ListView.View>
+                                    </ListView>
+                                </GroupBox>
                             </Grid>
                         </TabItem>
                         <TabItem Header="İADELER">

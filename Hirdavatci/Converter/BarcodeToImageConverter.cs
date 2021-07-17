@@ -6,7 +6,7 @@ namespace Hirdavatci
 {
     public class BarcodeToImageConverter : IValueConverter
     {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture) => value is string barcode ? barcode.GenerateBarCodeImage() : null;
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture) => value is Malzeme malzeme ? malzeme.GenerateBarCodeImage() : null;
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {

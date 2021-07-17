@@ -1,4 +1,5 @@
 ﻿using Extensions;
+using Microsoft.Win32;
 using SharpCompress.Common;
 using SharpCompress.Writers;
 using SharpCompress.Writers.Zip;
@@ -57,25 +58,33 @@ namespace Hirdavatci
             }
         }
 
-        public static BitmapImage GenerateBarCodeImage(this string Barkod, BarcodeFormat format = BarcodeFormat.QR_CODE)
+        public static BitmapImage GenerateBarCodeImage(this Malzeme malzeme, BarcodeFormat format = BarcodeFormat.QR_CODE)
         {
-            BarcodeWriter writer = new()
+            try
             {
-                Format = format,
-                Options = new ZXing.Common.EncodingOptions
+                BarcodeWriter writer = new()
                 {
-                    Height = (int)Properties.Settings.Default.QrHeight,
-                    Width = (int)Properties.Settings.Default.QrWidth,
-                    Margin = 0
+                    Format = format,
+                    Options = new ZXing.Common.EncodingOptions
+                    {
+                        Height = (int)Properties.Settings.Default.QrHeight,
+                        Width = (int)Properties.Settings.Default.QrWidth,
+                        Margin = 0
+                    }
+                };
+                if (!string.IsNullOrWhiteSpace(malzeme.Barkod))
+                {
+                    using System.Drawing.Bitmap image = writer.Write(malzeme.Barkod);
+                    return image.ToBitmapImage(ImageFormat.Png);
                 }
-            };
-            if (!string.IsNullOrWhiteSpace(Barkod))
-            {
-                using System.Drawing.Bitmap image = writer.Write(Barkod);
-                return image.ToBitmapImage(ImageFormat.Png);
+                malzeme.BarkodError = "";
+                return null;
             }
-
-            return null;
+            catch (Exception ex)
+            {
+                malzeme.BarkodError = ex.Message;
+                return null;
+            }
         }
 
         public static ObservableCollection<Malzeme> MalzemeleriYükle()
@@ -89,6 +98,17 @@ namespace Hirdavatci
             }
             _ = Directory.CreateDirectory(Path.GetDirectoryName(xmldatapath));
             return new ObservableCollection<Malzeme>();
+        }
+
+        public static void ResimEkle(Malzeme dc)
+        {
+            OpenFileDialog openFileDialog = new() { Multiselect = false, Filter = "Resim Dosyaları (*.jpg;*.jpeg;*.tif;*.tiff;*.png)|*.jpg;*.jpeg;*.tif;*.tiff;*.png" };
+            if (openFileDialog.ShowDialog() == true)
+            {
+                string filename = Guid.NewGuid() + Path.GetExtension(openFileDialog.FileName);
+                File.Copy(openFileDialog.FileName, $"{Path.GetDirectoryName(xmldatapath)}\\{filename}");
+                dc.ResimYolu = filename;
+            }
         }
 
         public static void Serialize<T>(this T dataToSerialize) where T : class

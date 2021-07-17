@@ -23,6 +23,7 @@ namespace Hirdavatci
         {
             Malzeme = new Malzeme();
             Satis = new Satis();
+            Taksit = new Taksit();
             Malzemeler = new Malzemeler
             {
                 Malzeme = ExtensionMethods.MalzemeleriYükle()
@@ -52,7 +53,7 @@ namespace Hirdavatci
             {
                 if (parameter is Malzeme dc)
                 {
-                    ResimEkle(dc);
+                    ExtensionMethods.ResimEkle(dc);
                 }
             }, parameter => true);
 
@@ -95,7 +96,7 @@ namespace Hirdavatci
             {
                 if (parameter is Malzeme dc)
                 {
-                    ResimEkle(dc);
+                    ExtensionMethods.ResimEkle(dc);
                     Malzemeler.Serialize();
                 }
             }, parameter => true);
@@ -191,6 +192,22 @@ namespace Hirdavatci
                         Telefon = Satis.Telefon
                     };
 
+                    if (Satis.SatisTipi == SatisTipi.TAKSİTLİ)
+                    {
+                        for (int i = 0; i < Taksit.TaksitSayisi; i++)
+                        {
+                            Taksit taksit = new()
+                            {
+                                Id = Taksit.Id = new Random(Guid.NewGuid().GetHashCode()).Next(1, int.MaxValue),
+                                TaksitSira = i + 1,
+                                TaksitBitti = false,
+                                TaksitTutar = Math.Round(Satis.SatisAdet * Satis.SatisFiyat / Taksit.TaksitSayisi, 2),
+                            };
+                            taksit.Vade = Taksit.BaşlangıçVade.AddMonths(Taksit.ÖdemeAyı * i);
+                            satis.Taksitler.Taksit.Add(taksit);
+                        }
+                    }
+
                     dc.KalanAdet -= Satis.SatisAdet;
                     dc.Satislar.Add(satis);
                     OnPropertyChanged(nameof(Malzeme));
@@ -203,6 +220,23 @@ namespace Hirdavatci
                 if (parameter is string filename)
                 {
                     _ = Process.Start($"{Path.GetDirectoryName(ExtensionMethods.xmldatapath)}\\{filename}");
+                }
+            }, parameter => true);
+
+            TaksitKapat = new RelayCommand<object>(parameter =>
+            {
+                if (parameter is Taksit taksit)
+                {
+                    if (taksit.OdenenTutar >= taksit.TaksitTutar)
+                    {
+                        taksit.TaksitBitti = true;
+                        taksit.TaksitOdenmeTarihi = DateTime.Today;
+                        Malzemeler.Serialize();
+                    }
+                    else
+                    {
+                        _ = MessageBox.Show("Ödenecek taksit tutarı, taksitin ana tutarından az olamaz.", "HIRDAVATÇI", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                    }
                 }
             }, parameter => true);
 
@@ -273,36 +307,17 @@ namespace Hirdavatci
 
         public Satis Satis { get; set; }
 
-        public ICommand VerileriYedekle { get; }
+        public Taksit Taksit { get; set; }
 
-        private static void ResimEkle(Malzeme dc)
-        {
-            OpenFileDialog openFileDialog = new() { Multiselect = false, Filter = "Resim Dosyaları (*.jpg;*.jpeg;*.tif;*.tiff;*.png)|*.jpg;*.jpeg;*.tif;*.tiff;*.png" };
-            if (openFileDialog.ShowDialog() == true)
-            {
-                string filename = Guid.NewGuid() + Path.GetExtension(openFileDialog.FileName);
-                File.Copy(openFileDialog.FileName, $"{Path.GetDirectoryName(ExtensionMethods.xmldatapath)}\\{filename}");
-                dc.ResimYolu = filename;
-            }
-        }
+        public ICommand TaksitKapat { get; }
+
+        public ICommand VerileriYedekle { get; }
 
         private void Default_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName is "QrHeight" or "QrWidth")
             {
-                GenerateBarcode();
-            }
-        }
-
-        private void GenerateBarcode()
-        {
-            try
-            {
-                Malzeme.BarkodImage = $"{Malzeme.Barkod}".GenerateBarCodeImage(Malzeme.BarcodeFormat);
-            }
-            catch (Exception ex)
-            {
-                _ = MessageBox.Show(ex.Message, "HIRDAVATÇI", MessageBoxButton.OK, MessageBoxImage.Exclamation);
+                Malzeme.BarkodImage = Malzeme.GenerateBarCodeImage(Malzeme.BarcodeFormat);
             }
         }
 
@@ -310,7 +325,7 @@ namespace Hirdavatci
         {
             if (e.PropertyName is "Barkod" or "BarcodeFormat")
             {
-                GenerateBarcode();
+                Malzeme.BarkodImage = Malzeme.GenerateBarCodeImage(Malzeme.BarcodeFormat);
             }
 
             if (e.PropertyName == "BarKodAramaMetni")

@@ -1,12 +1,21 @@
 ﻿using Extensions;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Windows.Media.Imaging;
 using System.Xml.Serialization;
 using ZXing;
 
 namespace Hirdavatci
 {
+    public enum SatisTipi
+    {
+        PEŞİN = 0,
+
+        TAKSİTLİ = 1
+    }
+
     [XmlRoot(ElementName = "Iadeler")]
     public class Iadeler : InpcBase
     {
@@ -72,6 +81,8 @@ namespace Hirdavatci
         private string barkod;
 
         private string barKodAra;
+
+        private string barkodError;
 
         private BitmapImage barkodImage;
 
@@ -153,6 +164,21 @@ namespace Hirdavatci
                 {
                     barKodAra = value;
                     OnPropertyChanged(nameof(BarKodAramaMetni));
+                }
+            }
+        }
+
+        [XmlIgnore]
+        public string BarkodError
+        {
+            get => barkodError;
+
+            set
+            {
+                if (barkodError != value)
+                {
+                    barkodError = value;
+                    OnPropertyChanged(nameof(BarkodError));
                 }
             }
         }
@@ -374,9 +400,13 @@ namespace Hirdavatci
 
         private string satinAlanKisi;
 
-        private int satisAdet;
+        private int satisAdet = 1;
 
         private double satisFiyat;
+
+        private SatisTipi satisTipi;
+
+        private Taksitler taksitler = new();
 
         private DateTime tarih = DateTime.Today;
 
@@ -485,6 +515,7 @@ namespace Hirdavatci
                 {
                     satisAdet = value;
                     OnPropertyChanged(nameof(SatisAdet));
+                    OnPropertyChanged(nameof(ToplamGelir));
                 }
             }
         }
@@ -500,6 +531,37 @@ namespace Hirdavatci
                 {
                     satisFiyat = value;
                     OnPropertyChanged(nameof(SatisFiyat));
+                    OnPropertyChanged(nameof(ToplamGelir));
+                }
+            }
+        }
+
+        [XmlIgnore]
+        public SatisTipi SatisTipi
+        {
+            get { return satisTipi; }
+
+            set
+            {
+                if (satisTipi != value)
+                {
+                    satisTipi = value;
+                    OnPropertyChanged(nameof(SatisTipi));
+                }
+            }
+        }
+
+        [XmlElement(ElementName = "Taksitler")]
+        public Taksitler Taksitler
+        {
+            get => taksitler;
+
+            set
+            {
+                if (taksitler != value)
+                {
+                    taksitler = value;
+                    OnPropertyChanged(nameof(Taksitler));
                 }
             }
         }
@@ -554,22 +616,199 @@ namespace Hirdavatci
         }
     }
 
-    [XmlRoot(ElementName = "Satislar")]
-    public class Satislar : InpcBase
+    [XmlRoot(ElementName = "Taksit")]
+    public class Taksit : InpcBase
     {
-        private Satis satis;
+        private DateTime başlangıçVade = DateTime.Today;
 
-        [XmlElement(ElementName = "Satis")]
-        public Satis Satis
+        private int ıd;
+
+        private double odenenTutar;
+
+        private int ödemeAyı = 1;
+
+        private bool taksitBitti;
+
+        private DateTime taksitOdenmeTarihi;
+
+        private int taksitSayisi = 2;
+
+        private int taksitSira;
+
+        private double taksitTutar;
+
+        private DateTime vade;
+
+        [XmlIgnore]
+        public DateTime BaşlangıçVade
         {
-            get => satis;
+            get => başlangıçVade;
 
             set
             {
-                if (satis != value)
+                if (başlangıçVade != value)
                 {
-                    satis = value;
-                    OnPropertyChanged(nameof(Satis));
+                    başlangıçVade = value;
+                    OnPropertyChanged(nameof(BaşlangıçVade));
+                }
+            }
+        }
+
+        [XmlAttribute(AttributeName = "Id")]
+        public int Id
+        {
+            get => ıd;
+
+            set
+            {
+                if (ıd != value)
+                {
+                    ıd = value;
+                    OnPropertyChanged(nameof(Id));
+                }
+            }
+        }
+
+        [XmlAttribute(AttributeName = "OdenenTutar")]
+        public double OdenenTutar
+        {
+            get => odenenTutar;
+
+            set
+            {
+                if (odenenTutar != value)
+                {
+                    odenenTutar = value;
+                    OnPropertyChanged(nameof(OdenenTutar));
+                }
+            }
+        }
+
+        [XmlIgnore]
+        public int ÖdemeAyı
+        {
+            get => ödemeAyı;
+
+            set
+            {
+                if (ödemeAyı != value)
+                {
+                    ödemeAyı = value;
+                    OnPropertyChanged(nameof(ÖdemeAyı));
+                }
+            }
+        }
+
+        [XmlIgnore]
+        public IEnumerable<int> ÖdemeAyListesi { get; set; } = Enumerable.Range(1, 12);
+
+        [XmlAttribute(AttributeName = "TaksitBitti")]
+        public bool TaksitBitti
+        {
+            get => taksitBitti;
+
+            set
+            {
+                if (taksitBitti != value)
+                {
+                    taksitBitti = value;
+                    OnPropertyChanged(nameof(TaksitBitti));
+                }
+            }
+        }
+
+        [XmlAttribute(AttributeName = "TaksitOdenmeTarihi")]
+        public DateTime TaksitOdenmeTarihi
+        {
+            get => taksitOdenmeTarihi;
+
+            set
+            {
+                if (taksitOdenmeTarihi != value)
+                {
+                    taksitOdenmeTarihi = value;
+                    OnPropertyChanged(nameof(TaksitOdenmeTarihi));
+                }
+            }
+        }
+
+        [XmlIgnore]
+        public int TaksitSayisi
+        {
+            get => taksitSayisi;
+
+            set
+            {
+                if (taksitSayisi != value)
+                {
+                    taksitSayisi = value;
+                    OnPropertyChanged(nameof(TaksitSayisi));
+                }
+            }
+        }
+
+        [XmlAttribute(AttributeName = "TaksitSira")]
+        public int TaksitSira
+        {
+            get => taksitSira;
+
+            set
+            {
+                if (taksitSira != value)
+                {
+                    taksitSira = value;
+                    OnPropertyChanged(nameof(TaksitSira));
+                }
+            }
+        }
+
+        [XmlAttribute(AttributeName = "TaksitTutar")]
+        public double TaksitTutar
+        {
+            get => taksitTutar;
+
+            set
+            {
+                if (taksitTutar != value)
+                {
+                    taksitTutar = value;
+                    OnPropertyChanged(nameof(TaksitTutar));
+                }
+            }
+        }
+
+        [XmlAttribute(AttributeName = "Vade")]
+        public DateTime Vade
+        {
+            get => vade;
+
+            set
+            {
+                if (vade != value)
+                {
+                    vade = value;
+                    OnPropertyChanged(nameof(Vade));
+                }
+            }
+        }
+    }
+
+    [XmlRoot(ElementName = "Taksitler")]
+    public class Taksitler : InpcBase
+    {
+        private ObservableCollection<Taksit> taksit = new();
+
+        [XmlElement(ElementName = "Taksit")]
+        public ObservableCollection<Taksit> Taksit
+        {
+            get => taksit;
+
+            set
+            {
+                if (taksit != value)
+                {
+                    taksit = value;
+                    OnPropertyChanged(nameof(Taksit));
                 }
             }
         }
