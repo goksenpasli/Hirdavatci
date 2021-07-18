@@ -172,7 +172,7 @@
                                         <GridViewColumn Header="TELEFON">
                                             <GridViewColumn.CellTemplate>
                                                 <DataTemplate>
-                                                    <Extensions:MaskedTextBlock UnmaskedText="{Binding Telefon}" InputMask="(000) 000 00 00" />
+                                                    <Extensions:MaskedTextBlock InputMask="(000) 000 00 00" UnmaskedText="{Binding Telefon}" />
                                                 </DataTemplate>
                                             </GridViewColumn.CellTemplate>
                                         </GridViewColumn>
@@ -643,7 +643,7 @@
                                     </ListView.View>
                                 </ListView>
                                 <GroupBox Header="TAKSİT DURUMU" Grid.Column="1">
-                                    <ListView ItemsSource="{Binding Path=SelectedItem.Taksitler.Taksit, Mode=OneWay, ElementName=LvSatislar}">
+                                    <ListView IsEnabled="{Binding SelectedItem.IadeEdildiMi, Converter={StaticResource ReverseBooleanConverter}, ElementName=LvSatislar, Mode=OneWay}" ItemsSource="{Binding Path=SelectedItem.Taksitler.Taksit, Mode=OneWay, ElementName=LvSatislar}">
                                         <ListView.ItemContainerStyle>
                                             <Style TargetType="ListViewItem">
                                                 <Style.Triggers>
