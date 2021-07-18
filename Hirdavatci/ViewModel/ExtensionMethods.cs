@@ -13,6 +13,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Media.Imaging;
+using System.Xml.Linq;
 using System.Xml.Serialization;
 using ZXing;
 
@@ -116,6 +117,19 @@ namespace Hirdavatci
             XmlSerializer serializer = new(typeof(T));
             using TextWriter stream = new StreamWriter(xmldatapath);
             serializer.Serialize(stream, dataToSerialize);
+        }
+
+        public static IEnumerable<Satis> YaklaşanTaksitleriAl(double gün = 100)
+        {
+            return !File.Exists(xmldatapath)
+                ? null
+                : XElement.Load(xmldatapath).Descendants("Satislar").GroupBy(x => x, (satislar, _) => new Satis()
+                {
+                    Aciklama = satislar?.Parent?.Attribute("Aciklama").Value,
+                    SatinAlanKisi = satislar?.Attribute("SatinAlanKisi")?.Value,
+                    Telefon = satislar?.Attribute("Telefon")?.Value,
+                    Tarih = satislar?.Descendants("Taksit")?.Where(z => (DateTime)z.Attribute("Vade") < DateTime.Now.AddDays(gün) && !(bool)z.Attribute("TaksitBitti")).Select(z => (DateTime)z.Attribute("Vade")).FirstOrDefault() ?? default
+                }).Where(z => z.Tarih != DateTime.MinValue).OrderBy(z => z.Tarih);
         }
     }
 }

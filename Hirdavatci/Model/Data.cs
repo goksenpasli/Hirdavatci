@@ -631,6 +631,9 @@ namespace Hirdavatci
                 }
             }
         }
+
+        [XmlIgnore]
+        public IEnumerable<Satis> YaklaşanTaksitler { get; set; } = ExtensionMethods.YaklaşanTaksitleriAl();
     }
 
     [XmlRoot(ElementName = "Taksit")]

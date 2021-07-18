@@ -51,118 +51,138 @@
                     <RowDefinition />
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
-                <StackPanel>
-                    <HeaderedContentControl Header="MALZEME ADI">
-                        <TextBox Text="{Binding Malzeme.Aciklama, UpdateSourceTrigger=PropertyChanged}" />
-                    </HeaderedContentControl>
-                    <HeaderedContentControl Header="MALZEME BİRİM FİYATI">
-                        <Extensions:NumericUpDownControl CurrencyMode="True"
-                            Maximum="{x:Static system:Double.MaxValue}"
-                            Orientation="Horizontal" SmallChange="1"
-                            Value="{Binding Malzeme.BirimFiyat, UpdateSourceTrigger=PropertyChanged}" />
-                    </HeaderedContentControl>
-                    <HeaderedContentControl Header="MALZEME TOPLAM ADETİ">
-                        <Extensions:NumericUpDownControl Maximum="{x:Static system:Double.MaxValue}"
-                            Orientation="Horizontal" SmallChange="1"
-                            Value="{Binding Malzeme.ToplamAdet, UpdateSourceTrigger=PropertyChanged}" />
-                    </HeaderedContentControl>
-                    <HeaderedContentControl Header="MALZEME ALIM TARİHİ">
-                        <DatePicker IsEnabled="False" SelectedDate="{Binding Malzeme.MalzemeAlimTarihi, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                    </HeaderedContentControl>
-                    <Extensions:SplitButton HorizontalContentAlignment="Stretch" Command="{Binding MalzemeResimYükle, Mode=OneWay}" CommandParameter="{Binding Malzeme}">
-                        <Extensions:SplitButton.Content>
-                            <StackPanel Orientation="Horizontal">
-                                <Image Width="32" Height="32">
-                                    <Image.Source>
-                                        <MultiBinding Converter="{StaticResource SystemFileIconConverter}">
-                                            <Binding Source="Shell32.dll" />
-                                            <Binding Source="139" />
-                                        </MultiBinding>
-                                    </Image.Source>
-                                </Image>
-                                <TextBlock Text="MALZEME RESMİ EKLE" VerticalAlignment="Center" />
-                            </StackPanel>
-                        </Extensions:SplitButton.Content>
-                        <Extensions:SplitButton.InternalContent>
-                            <local:CameraUserControl Width="480" Height="360" PropertyChanged="CameraUserControl_PropertyChanged" />
-                        </Extensions:SplitButton.InternalContent>
-                    </Extensions:SplitButton>
-                    <GroupBox Header="BARKOD">
-                        <Grid>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition />
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                            </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition />
-                            </Grid.ColumnDefinitions>
-                            <HeaderedContentControl Grid.ColumnSpan="2">
-                                <HeaderedContentControl.Header>
-                                    <ComboBox ItemsSource="{Binding Mode=OneWay, Source={StaticResource Barcodes}}" SelectedItem="{Binding Malzeme.BarcodeFormat}" />
-                                </HeaderedContentControl.Header>
-                                <TextBox Text="{Binding Malzeme.Barkod, UpdateSourceTrigger=PropertyChanged}" />
-                            </HeaderedContentControl>
-                            <Slider Grid.Row="1"
-                                AutoToolTipPlacement="TopLeft" IsSnapToTickEnabled="True" Maximum="175" Minimum="1"
-                                Orientation="Vertical" SmallChange="1"
-                                Value="{Binding QrHeight, Source={x:Static properties:Settings.Default}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                            <Viewbox Grid.Row="1" Grid.Column="1"
-                                Width="{Binding QrWidth, Source={x:Static properties:Settings.Default}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
-                                Height="{Binding QrHeight, Source={x:Static properties:Settings.Default}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                                <Image Source="{Binding Malzeme.BarkodImage}">
-                                    <Image.ContextMenu>
-                                        <ContextMenu>
-                                            <MenuItem Header="RESİM OLARAK SAKLA" Command="{Binding KareKodSakla, Mode=OneWay}" CommandParameter="{Binding Malzeme.BarkodImage}">
-                                                <MenuItem.Icon>
-                                                    <Image Width="16" Height="16">
-                                                        <Image.Source>
-                                                            <MultiBinding Converter="{StaticResource SystemFileIconConverter}">
-                                                                <Binding Source="Shell32.dll" />
-                                                                <Binding Source="122" />
-                                                            </MultiBinding>
-                                                        </Image.Source>
-                                                    </Image>
-                                                </MenuItem.Icon>
-                                            </MenuItem>
-                                            <MenuItem Header="KOD YAZDIR" Command="{Binding KareKodYazdır}" CommandParameter="{Binding Parent.PlacementTarget, RelativeSource={RelativeSource Mode=Self}}">
-                                                <MenuItem.Icon>
-                                                    <Image Width="16" Height="16">
-                                                        <Image.Source>
-                                                            <MultiBinding Converter="{StaticResource SystemFileIconConverter}">
-                                                                <Binding Source="Shell32.dll" />
-                                                                <Binding Source="136" />
-                                                            </MultiBinding>
-                                                        </Image.Source>
-                                                    </Image>
-                                                </MenuItem.Icon>
-                                            </MenuItem>
-                                        </ContextMenu>
-                                    </Image.ContextMenu>
-                                </Image>
-                            </Viewbox>
-                            <Slider Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2"
-                                AutoToolTipPlacement="TopLeft" IsSnapToTickEnabled="True" Maximum="350" Minimum="1"
-                                SmallChange="1"
-                                Value="{Binding QrWidth, Source={x:Static properties:Settings.Default}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                            <Button Grid.Row="2" Command="{Binding AyarKaydet}" ToolTip="Ayar Kaydet">
-                                <Image Width="16" Height="16">
-                                    <Image.Source>
-                                        <MultiBinding Converter="{StaticResource SystemFileIconConverter}">
-                                            <Binding Source="Shell32.dll" />
-                                            <Binding Source="121" />
-                                        </MultiBinding>
-                                    </Image.Source>
-                                </Image>
-                            </Button>
-                            <TextBlock Text="{Binding Malzeme.BarkodError}"
-                                Grid.Row="3" Grid.ColumnSpan="2"
-                                Foreground="Red" />
-                        </Grid>
-                    </GroupBox>
-                </StackPanel>
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel>
+                        <HeaderedContentControl Header="MALZEME ADI">
+                            <TextBox Text="{Binding Malzeme.Aciklama, UpdateSourceTrigger=PropertyChanged}" />
+                        </HeaderedContentControl>
+                        <HeaderedContentControl Header="MALZEME BİRİM FİYATI">
+                            <Extensions:NumericUpDownControl CurrencyMode="True"
+                                Maximum="{x:Static system:Double.MaxValue}"
+                                Orientation="Horizontal" SmallChange="1"
+                                Value="{Binding Malzeme.BirimFiyat, UpdateSourceTrigger=PropertyChanged}" />
+                        </HeaderedContentControl>
+                        <HeaderedContentControl Header="MALZEME TOPLAM ADETİ">
+                            <Extensions:NumericUpDownControl Maximum="{x:Static system:Double.MaxValue}"
+                                Orientation="Horizontal" SmallChange="1"
+                                Value="{Binding Malzeme.ToplamAdet, UpdateSourceTrigger=PropertyChanged}" />
+                        </HeaderedContentControl>
+                        <HeaderedContentControl Header="MALZEME ALIM TARİHİ">
+                            <DatePicker IsEnabled="False" SelectedDate="{Binding Malzeme.MalzemeAlimTarihi, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        </HeaderedContentControl>
+                        <Extensions:SplitButton HorizontalContentAlignment="Stretch" Command="{Binding MalzemeResimYükle, Mode=OneWay}" CommandParameter="{Binding Malzeme}">
+                            <Extensions:SplitButton.Content>
+                                <StackPanel Orientation="Horizontal">
+                                    <Image Width="32" Height="32">
+                                        <Image.Source>
+                                            <MultiBinding Converter="{StaticResource SystemFileIconConverter}">
+                                                <Binding Source="Shell32.dll" />
+                                                <Binding Source="139" />
+                                            </MultiBinding>
+                                        </Image.Source>
+                                    </Image>
+                                    <TextBlock Text="MALZEME RESMİ EKLE" VerticalAlignment="Center" />
+                                </StackPanel>
+                            </Extensions:SplitButton.Content>
+                            <Extensions:SplitButton.InternalContent>
+                                <local:CameraUserControl Width="480" Height="360" PropertyChanged="CameraUserControl_PropertyChanged" />
+                            </Extensions:SplitButton.InternalContent>
+                        </Extensions:SplitButton>
+                        <GroupBox Header="BARKOD">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition />
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition />
+                                </Grid.ColumnDefinitions>
+                                <HeaderedContentControl Grid.ColumnSpan="2">
+                                    <HeaderedContentControl.Header>
+                                        <ComboBox ItemsSource="{Binding Mode=OneWay, Source={StaticResource Barcodes}}" SelectedItem="{Binding Malzeme.BarcodeFormat}" />
+                                    </HeaderedContentControl.Header>
+                                    <TextBox Text="{Binding Malzeme.Barkod, UpdateSourceTrigger=PropertyChanged}" />
+                                </HeaderedContentControl>
+                                <Slider Grid.Row="1"
+                                    AutoToolTipPlacement="TopLeft" IsSnapToTickEnabled="True" Maximum="175" Minimum="1"
+                                    Orientation="Vertical" SmallChange="1"
+                                    Value="{Binding QrHeight, Source={x:Static properties:Settings.Default}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                <Viewbox Grid.Row="1" Grid.Column="1"
+                                    Width="{Binding QrWidth, Source={x:Static properties:Settings.Default}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                    Height="{Binding QrHeight, Source={x:Static properties:Settings.Default}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                                    <Image Source="{Binding Malzeme.BarkodImage}">
+                                        <Image.ContextMenu>
+                                            <ContextMenu>
+                                                <MenuItem Header="RESİM OLARAK SAKLA" Command="{Binding KareKodSakla, Mode=OneWay}" CommandParameter="{Binding Malzeme.BarkodImage}">
+                                                    <MenuItem.Icon>
+                                                        <Image Width="16" Height="16">
+                                                            <Image.Source>
+                                                                <MultiBinding Converter="{StaticResource SystemFileIconConverter}">
+                                                                    <Binding Source="Shell32.dll" />
+                                                                    <Binding Source="122" />
+                                                                </MultiBinding>
+                                                            </Image.Source>
+                                                        </Image>
+                                                    </MenuItem.Icon>
+                                                </MenuItem>
+                                                <MenuItem Header="KOD YAZDIR" Command="{Binding KareKodYazdır}" CommandParameter="{Binding Parent.PlacementTarget, RelativeSource={RelativeSource Mode=Self}}">
+                                                    <MenuItem.Icon>
+                                                        <Image Width="16" Height="16">
+                                                            <Image.Source>
+                                                                <MultiBinding Converter="{StaticResource SystemFileIconConverter}">
+                                                                    <Binding Source="Shell32.dll" />
+                                                                    <Binding Source="136" />
+                                                                </MultiBinding>
+                                                            </Image.Source>
+                                                        </Image>
+                                                    </MenuItem.Icon>
+                                                </MenuItem>
+                                            </ContextMenu>
+                                        </Image.ContextMenu>
+                                    </Image>
+                                </Viewbox>
+                                <Slider Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2"
+                                    AutoToolTipPlacement="TopLeft" IsSnapToTickEnabled="True" Maximum="350" Minimum="1"
+                                    SmallChange="1"
+                                    Value="{Binding QrWidth, Source={x:Static properties:Settings.Default}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                <Button Grid.Row="2" Command="{Binding AyarKaydet}" ToolTip="Ayar Kaydet">
+                                    <Image Width="16" Height="16">
+                                        <Image.Source>
+                                            <MultiBinding Converter="{StaticResource SystemFileIconConverter}">
+                                                <Binding Source="Shell32.dll" />
+                                                <Binding Source="121" />
+                                            </MultiBinding>
+                                        </Image.Source>
+                                    </Image>
+                                </Button>
+                                <TextBlock Text="{Binding Malzeme.BarkodError}"
+                                    Grid.Row="3" Grid.ColumnSpan="2"
+                                    Foreground="Red" />
+                            </Grid>
+                        </GroupBox>
+                        <GroupBox Header="YAKLAŞAN TAKSİTLER" Height="150">
+                            <ListView ItemsSource="{Binding Satis.YaklaşanTaksitler}">
+                                <ListView.View>
+                                    <GridView>
+                                        <GridViewColumn Header="MALZEME" DisplayMemberBinding="{Binding Aciklama}" />
+                                        <GridViewColumn Header="KİŞİ" DisplayMemberBinding="{Binding SatinAlanKisi}" />
+                                        <GridViewColumn Header="TELEFON">
+                                            <GridViewColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <Extensions:MaskedTextBlock UnmaskedText="{Binding Telefon}" InputMask="(000) 000 00 00" />
+                                                </DataTemplate>
+                                            </GridViewColumn.CellTemplate>
+                                        </GridViewColumn>
+                                        <GridViewColumn Header="TARİH" DisplayMemberBinding="{Binding Tarih, StringFormat=\{0:d\}}" />
+                                    </GridView>
+                                </ListView.View>
+                            </ListView>
+                        </GroupBox>
+                    </StackPanel>
+                </ScrollViewer>
                 <UniformGrid Grid.Row="2" Columns="2">
                     <Button Command="{Binding DepoyaEkle}" CommandParameter="{Binding Malzeme}">
                         <Button.Content>
@@ -659,7 +679,7 @@
                                                 <GridViewColumn Header="ÖDENEN">
                                                     <GridViewColumn.CellTemplate>
                                                         <DataTemplate>
-                                                            <Extensions:NumericUpDownControl CurrencyMode="True" 
+                                                            <Extensions:NumericUpDownControl CurrencyMode="True"
                                                                 Maximum="{x:Static system:Double.MaxValue}"
                                                                 Orientation="Vertical"
                                                                 Value="{Binding OdenenTutar, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
