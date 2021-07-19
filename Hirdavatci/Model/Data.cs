@@ -318,7 +318,7 @@ namespace Hirdavatci
             }
         }
 
-        [XmlElement(ElementName = "Satislar")]
+        [XmlElement(ElementName = "Satis")]
         public ObservableCollection<Satis> Satislar
         {
             get => satislar;
@@ -410,7 +410,7 @@ namespace Hirdavatci
 
         private Satis seçiliSatis;
 
-        private ObservableCollection< Taksit> taksitler = new();
+        private ObservableCollection<Taksit> taksitler = new();
 
         private DateTime tarih = DateTime.Today;
 

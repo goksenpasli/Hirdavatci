@@ -130,7 +130,7 @@ namespace Hirdavatci
         {
             return !File.Exists(xmldatapath)
                 ? null
-                : XElement.Load(xmldatapath).Descendants("Satislar").Select(satislar => new Satis()
+                : XElement.Load(xmldatapath).Descendants("Satis").Select(satislar => new Satis()
                 {
                     Aciklama = satislar?.Parent?.Attribute("Aciklama").Value,
                     SatinAlanKisi = satislar?.Attribute("SatinAlanKisi")?.Value,
