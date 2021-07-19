@@ -7,9 +7,9 @@
     xmlns:properties="clr-namespace:Hirdavatci.Properties" xmlns:system="clr-namespace:System;assembly=mscorlib"
     xmlns:zxing="clr-namespace:ZXing;assembly=zxing"
     Title="HIRDAVATÇI"
-    Width="800" Height="600"
     d:DataContext="{d:DesignInstance Type=local:MainViewModel}"
-    UseLayoutRounding="True" WindowStartupLocation="CenterScreen" WindowState="Maximized"
+    d:DesignHeight="768" d:DesignWidth="1024" UseLayoutRounding="True" WindowStartupLocation="CenterScreen"
+    WindowState="Maximized"
     mc:Ignorable="d">
     <Window.Resources>
         <local:MalzemeValueToProgressBarColorConverter x:Key="MalzemeValueToProgressBarColorConverter" />
@@ -70,7 +70,10 @@
                         <HeaderedContentControl Header="MALZEME ALIM TARİHİ">
                             <DatePicker IsEnabled="False" SelectedDate="{Binding Malzeme.MalzemeAlimTarihi, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                         </HeaderedContentControl>
-                        <Extensions:SplitButton HorizontalContentAlignment="Stretch" Command="{Binding MalzemeResimYükle, Mode=OneWay}" CommandParameter="{Binding Malzeme}">
+                        <Extensions:SplitButton HorizontalContentAlignment="Stretch"
+                            Command="{Binding MalzemeResimYükle, Mode=OneWay}"
+                            CommandParameter="{Binding Malzeme}"
+                            IsTabStop="False">
                             <Extensions:SplitButton.Content>
                                 <StackPanel Orientation="Horizontal">
                                     <Image Width="32" Height="32">
@@ -92,6 +95,7 @@
                             <Grid>
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
                                     <RowDefinition />
                                     <RowDefinition Height="Auto" />
                                     <RowDefinition Height="Auto" />
@@ -100,17 +104,16 @@
                                     <ColumnDefinition Width="Auto" />
                                     <ColumnDefinition />
                                 </Grid.ColumnDefinitions>
-                                <HeaderedContentControl Grid.ColumnSpan="2">
-                                    <HeaderedContentControl.Header>
-                                        <ComboBox ItemsSource="{Binding Mode=OneWay, Source={StaticResource Barcodes}}" SelectedItem="{Binding Malzeme.BarcodeFormat}" />
-                                    </HeaderedContentControl.Header>
-                                    <TextBox Text="{Binding Malzeme.Barkod, UpdateSourceTrigger=PropertyChanged}" />
-                                </HeaderedContentControl>
-                                <Slider Grid.Row="1"
-                                    AutoToolTipPlacement="TopLeft" IsSnapToTickEnabled="True" Maximum="175" Minimum="1"
-                                    Orientation="Vertical" SmallChange="1"
+                                <TextBox Text="{Binding Malzeme.Barkod, UpdateSourceTrigger=PropertyChanged}" Grid.Row="0" Grid.ColumnSpan="2" />
+                                <ComboBox Grid.Row="1" Grid.ColumnSpan="2"
+                                    ItemsSource="{Binding Mode=OneWay, Source={StaticResource Barcodes}}"
+                                    IsTabStop="False"
+                                    SelectedItem="{Binding Malzeme.BarcodeFormat}" />
+                                <Slider Grid.Row="2"
+                                    AutoToolTipPlacement="TopLeft" IsSnapToTickEnabled="True" IsTabStop="False" LargeChange="10"
+                                    Maximum="175" Minimum="1" Orientation="Vertical" SmallChange="1"
                                     Value="{Binding QrHeight, Source={x:Static properties:Settings.Default}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                <Viewbox Grid.Row="1" Grid.Column="1"
+                                <Viewbox Grid.Row="2" Grid.Column="1"
                                     Width="{Binding QrWidth, Source={x:Static properties:Settings.Default}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
                                     Height="{Binding QrHeight, Source={x:Static properties:Settings.Default}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
                                     <Image Source="{Binding Malzeme.BarkodImage}">
@@ -144,11 +147,13 @@
                                         </Image.ContextMenu>
                                     </Image>
                                 </Viewbox>
-                                <Slider Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2"
-                                    AutoToolTipPlacement="TopLeft" IsSnapToTickEnabled="True" Maximum="350" Minimum="1"
-                                    SmallChange="1"
+                                <Slider Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2"
+                                    AutoToolTipPlacement="TopLeft" IsSnapToTickEnabled="True" IsTabStop="False" LargeChange="10"
+                                    Maximum="350" Minimum="1" SmallChange="1"
                                     Value="{Binding QrWidth, Source={x:Static properties:Settings.Default}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                <Button Grid.Row="2" Command="{Binding AyarKaydet}" ToolTip="Ayar Kaydet">
+                                <Button Grid.Row="3"
+                                    Command="{Binding AyarKaydet}"
+                                    IsTabStop="False" ToolTip="Ayar Kaydet">
                                     <Image Width="16" Height="16">
                                         <Image.Source>
                                             <MultiBinding Converter="{StaticResource SystemFileIconConverter}">
@@ -159,27 +164,9 @@
                                     </Image>
                                 </Button>
                                 <TextBlock Text="{Binding Malzeme.BarkodError}"
-                                    Grid.Row="3" Grid.ColumnSpan="2"
+                                    Grid.Row="4" Grid.ColumnSpan="2"
                                     Foreground="Red" />
                             </Grid>
-                        </GroupBox>
-                        <GroupBox Header="YAKLAŞAN TAKSİTLER" Height="150">
-                            <ListView ItemsSource="{Binding Satis.YaklaşanTaksitler}">
-                                <ListView.View>
-                                    <GridView>
-                                        <GridViewColumn Header="MALZEME" DisplayMemberBinding="{Binding Aciklama}" />
-                                        <GridViewColumn Header="KİŞİ" DisplayMemberBinding="{Binding SatinAlanKisi}" />
-                                        <GridViewColumn Header="TELEFON">
-                                            <GridViewColumn.CellTemplate>
-                                                <DataTemplate>
-                                                    <Extensions:MaskedTextBlock InputMask="(000) 000 00 00" UnmaskedText="{Binding Telefon}" />
-                                                </DataTemplate>
-                                            </GridViewColumn.CellTemplate>
-                                        </GridViewColumn>
-                                        <GridViewColumn Header="TARİH" DisplayMemberBinding="{Binding Tarih, StringFormat=\{0:d\}}" />
-                                    </GridView>
-                                </ListView.View>
-                            </ListView>
                         </GroupBox>
                     </StackPanel>
                 </ScrollViewer>
@@ -233,14 +220,16 @@
                     </Grid.ColumnDefinitions>
                     <TextBlock Text="DEPO" VerticalAlignment="Center" />
                     <StackPanel Grid.Column="1" HorizontalAlignment="Right" Orientation="Horizontal">
-                        <Button Command="{Binding CsvDosyasınaYaz, Mode=OneWay}" CommandParameter="{Binding Malzemeler.Malzeme}" ToolTip="Excele Ver">
+                        <Button Command="{Binding CsvDosyasınaYaz, Mode=OneWay}"
+                            CommandParameter="{Binding Malzemeler.Malzeme}"
+                            IsTabStop="False" ToolTip="Excele Ver">
                             <Image Width="16" Height="16">
                                 <Image.Source>
                                     <Binding Converter="{StaticResource FilePathToIconConverter}" Source=".csv" />
                                 </Image.Source>
                             </Image>
                         </Button>
-                        <Button Command="{Binding CsvDosyasındanVeriAl, Mode=OneWay}" ToolTip="Excelden Al">
+                        <Button Command="{Binding CsvDosyasındanVeriAl, Mode=OneWay}" IsTabStop="False" ToolTip="Excelden Al">
                             <Image Width="16" Height="16">
                                 <Image.Source>
                                     <Binding Converter="{StaticResource FilePathToIconConverter}" Source=".csv" />
@@ -256,7 +245,8 @@
                     <RowDefinition Height="3*" />
                 </Grid.RowDefinitions>
                 <GroupBox Header="DEPO DURUMU" Grid.Row="0">
-                    <ListView ItemsSource="{Binding Mode=OneWay, Source={StaticResource CvsMalzemeler}}"
+                    <ListView Margin="0,0,0,0.2"
+                        ItemsSource="{Binding Mode=OneWay, Source={StaticResource CvsMalzemeler}}"
                         Extensions:GridViewSort.AutoSort="True"
                         SelectedItem="{Binding Malzeme.SeçiliMalzeme}"
                         VirtualizingPanel.VirtualizationMode="Recycling">
@@ -343,10 +333,7 @@
                                         </DataTemplate>
                                     </GridViewColumn.CellTemplate>
                                 </GridViewColumn>
-                                <GridViewColumn Header="BİRİM&#x0a;FİYAT"
-                                    Width="120"
-                                    Extensions:GridViewSort.PropertyName="BirimFiyat"
-                                    DisplayMemberBinding="{Binding BirimFiyat, StringFormat=\{0:C\}}">
+                                <GridViewColumn Width="120" Extensions:GridViewSort.PropertyName="BirimFiyat" DisplayMemberBinding="{Binding BirimFiyat, StringFormat=\{0:C\}}">
                                     <GridViewColumn.HeaderTemplate>
                                         <DataTemplate>
                                             <UniformGrid Columns="2">
@@ -451,7 +438,7 @@
                                                 <TextBox Text="{Binding Satis.SatinAlanKisi, UpdateSourceTrigger=PropertyChanged}" />
                                             </HeaderedContentControl>
                                             <HeaderedContentControl Header="TELEFON">
-                                                <Extensions:MaskedTextBox IncludeLiterals="False" IncludePrompt="False" Mask="(000) 000 00 00"
+                                                <Extensions:MaskedTextBox ClearButtonVisibility="Visible" IncludeLiterals="False" IncludePrompt="False" Mask="(000) 000 00 00"
                                                     Value="{Binding Satis.Telefon, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                                             </HeaderedContentControl>
                                             <HeaderedContentControl Header="ADET">
@@ -534,7 +521,9 @@
                                 </Grid.ColumnDefinitions>
                                 <ListView x:Name="LvSatislar"
                                     ItemsSource="{Binding Mode=OneWay, Source={StaticResource CvsSatış}}"
-                                    Extensions:GridViewSort.AutoSort="True" VirtualizingPanel.IsVirtualizingWhenGrouping="True">
+                                    Extensions:GridViewSort.AutoSort="True"
+                                    SelectedItem="{Binding Satis.SeçiliSatis}"
+                                    VirtualizingPanel.IsVirtualizingWhenGrouping="True">
                                     <ListView.GroupStyle>
                                         <GroupStyle>
                                             <GroupStyle.ContainerStyle>
@@ -643,7 +632,7 @@
                                     </ListView.View>
                                 </ListView>
                                 <GroupBox Header="TAKSİT DURUMU" Grid.Column="1">
-                                    <ListView IsEnabled="{Binding SelectedItem.IadeEdildiMi, Converter={StaticResource ReverseBooleanConverter}, ElementName=LvSatislar, Mode=OneWay}" ItemsSource="{Binding Path=SelectedItem.Taksitler.Taksit, Mode=OneWay, ElementName=LvSatislar}">
+                                    <ListView IsEnabled="{Binding DataContext.Satis.SeçiliSatis.IadeEdildiMi, Converter={StaticResource ReverseBooleanConverter}, RelativeSource={RelativeSource AncestorType=local:MainWindow}}" ItemsSource="{Binding Path=DataContext.Satis.SeçiliSatis.Taksitler, Mode=OneWay, RelativeSource={RelativeSource AncestorType=local:MainWindow}}">
                                         <ListView.ItemContainerStyle>
                                             <Style TargetType="ListViewItem">
                                                 <Style.Triggers>
@@ -689,7 +678,7 @@
                                                 <GridViewColumn>
                                                     <GridViewColumn.CellTemplate>
                                                         <DataTemplate>
-                                                            <Button Content="İŞLE" Command="{Binding DataContext.TaksitKapat, ElementName=grid}" CommandParameter="{Binding Mode=OneWay}" />
+                                                            <Button Content="İŞLE" Command="{Binding DataContext.TaksitKapat, RelativeSource={RelativeSource AncestorType=local:MainWindow}}" CommandParameter="{Binding Mode=OneWay}" />
                                                         </DataTemplate>
                                                     </GridViewColumn.CellTemplate>
                                                 </GridViewColumn>
@@ -713,6 +702,42 @@
                                                 Width="250"
                                                 Extensions:GridViewSort.PropertyName="IadeAciklama"
                                                 DisplayMemberBinding="{Binding IadeAciklama}" />
+                                        </GridView>
+                                    </ListView.View>
+                                </ListView>
+                            </Grid>
+                        </TabItem>
+                        <TabItem>
+                            <TabItem.Header>
+                                <StackPanel>
+                                    <TextBlock Text="YAKLAŞAN TAKSİTLER">
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="Foreground" Value="Red" />
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Satis.YaklaşanTaksitler.Count}" Value="0">
+                                                        <Setter Property="Foreground" Value="Black" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+                                </StackPanel>
+                            </TabItem.Header>
+                            <Grid>
+                                <ListView ItemsSource="{Binding Satis.YaklaşanTaksitler}">
+                                    <ListView.View>
+                                        <GridView>
+                                            <GridViewColumn Header="MALZEME" DisplayMemberBinding="{Binding Aciklama}" />
+                                            <GridViewColumn Header="KİŞİ" DisplayMemberBinding="{Binding SatinAlanKisi}" />
+                                            <GridViewColumn Header="TELEFON">
+                                                <GridViewColumn.CellTemplate>
+                                                    <DataTemplate>
+                                                        <Extensions:MaskedTextBlock InputMask="(000) 000 00 00" UnmaskedText="{Binding Telefon}" />
+                                                    </DataTemplate>
+                                                </GridViewColumn.CellTemplate>
+                                            </GridViewColumn>
+                                            <GridViewColumn Header="TARİH" DisplayMemberBinding="{Binding Tarih, StringFormat=\{0:d\}}" />
                                         </GridView>
                                     </ListView.View>
                                 </ListView>

@@ -515,14 +515,14 @@
                         HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
                         VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"
                         Command="{TemplateBinding Command}"
-                        CommandParameter="{TemplateBinding CommandParameter}">
+                        CommandParameter="{TemplateBinding CommandParameter}" IsTabStop="{TemplateBinding IsTabStop}">
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition />
                                 <ColumnDefinition Width="14" />
                             </Grid.ColumnDefinitions>
                             <ContentPresenter Content="{TemplateBinding Content}" Grid.Column="0" />
-                            <ToggleButton x:Name="Tb" Grid.Column="1" IsEnabled="{TemplateBinding SplitContentPartIsEnabled}">
+                            <ToggleButton x:Name="Tb" Grid.Column="1" IsEnabled="{TemplateBinding SplitContentPartIsEnabled}" IsTabStop="{TemplateBinding IsTabStop}">
                                 <Path x:Name="path"
                                     HorizontalAlignment="Center" VerticalAlignment="Center"
                                     Data="{StaticResource ArrowGeometry}"

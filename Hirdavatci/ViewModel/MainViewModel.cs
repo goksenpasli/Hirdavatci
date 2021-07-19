@@ -1,20 +1,17 @@
 ﻿using Extensions;
 using Microsoft.Win32;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
-using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
-using System.Xml.Linq;
 
 namespace Hirdavatci
 {
@@ -368,10 +365,8 @@ namespace Hirdavatci
                     TaksitTutar = Math.Round(Satis.SatisAdet * Satis.SatisFiyat / taksitsayısı, 2),
                 };
                 taksit.Vade = Taksit.BaşlangıçVade.AddMonths(ödemeAyı * i);
-                satis.Taksitler.Taksit.Add(taksit);
+                satis.Taksitler.Add(taksit);
             }
         }
-
-      
     }
 }

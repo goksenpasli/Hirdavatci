@@ -408,7 +408,9 @@ namespace Hirdavatci
 
         private SatisTipi satisTipi;
 
-        private Taksitler taksitler = new();
+        private Satis seçiliSatis;
+
+        private ObservableCollection< Taksit> taksitler = new();
 
         private DateTime tarih = DateTime.Today;
 
@@ -568,8 +570,23 @@ namespace Hirdavatci
             }
         }
 
-        [XmlElement(ElementName = "Taksitler")]
-        public Taksitler Taksitler
+        [XmlIgnore]
+        public Satis SeçiliSatis
+        {
+            get => seçiliSatis;
+
+            set
+            {
+                if (seçiliSatis != value)
+                {
+                    seçiliSatis = value;
+                    OnPropertyChanged(nameof(SeçiliSatis));
+                }
+            }
+        }
+
+        [XmlElement(ElementName = "Taksit")]
+        public ObservableCollection<Taksit> Taksitler
         {
             get => taksitler;
 
@@ -813,24 +830,4 @@ namespace Hirdavatci
         }
     }
 
-    [XmlRoot(ElementName = "Taksitler")]
-    public class Taksitler : InpcBase
-    {
-        private ObservableCollection<Taksit> taksit = new();
-
-        [XmlElement(ElementName = "Taksit")]
-        public ObservableCollection<Taksit> Taksit
-        {
-            get => taksit;
-
-            set
-            {
-                if (taksit != value)
-                {
-                    taksit = value;
-                    OnPropertyChanged(nameof(Taksit));
-                }
-            }
-        }
-    }
 }
