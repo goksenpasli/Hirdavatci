@@ -40,6 +40,12 @@ namespace Hirdavatci
             return serializer.Deserialize(stream) as T;
         }
 
+        public static T DeSerialize<T>(this XElement xElement) where T : class, new()
+        {
+            XmlSerializer serializer = new(typeof(T));
+            return serializer.Deserialize(xElement.CreateReader()) as T;
+        }
+
         public static IEnumerable<Malzeme> ExceldenVeriAl(this string dosyayolu)
         {
             try

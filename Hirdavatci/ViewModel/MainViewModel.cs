@@ -210,7 +210,7 @@ namespace Hirdavatci
             {
                 if (parameter is string filename)
                 {
-                    _ = Process.Start($"{Path.GetDirectoryName(ExtensionMethods.xmldatapath)}\\{filename}");
+                    _ = Process.Start($@"{Path.GetDirectoryName(ExtensionMethods.xmldatapath)}\{filename}");
                 }
             }, parameter => true);
 
@@ -230,7 +230,7 @@ namespace Hirdavatci
                     }
                 }
             }, parameter => true);
-
+            
             AyarKaydet = new RelayCommand<object>(parameter => Properties.Settings.Default.Save(), parameter => true);
 
             VerileriYedekle = new RelayCommand<object>(parameter =>

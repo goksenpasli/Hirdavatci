@@ -29,6 +29,7 @@
             </CollectionViewSource.GroupDescriptions>
         </CollectionViewSource>
         <CollectionViewSource x:Key="CvsMalzemeler" d:DesignSource="{d:DesignInstance CreateList=True, Type={x:Type local:Malzeme}}" Source="{Binding Malzemeler.Malzeme}" />
+        <CollectionViewSource x:Key="CvsYaklaşanTaksitler" d:DesignSource="{d:DesignInstance CreateList=True, Type={x:Type local:Satis}}" Source="{Binding Malzeme.YaklaşanTaksitler}" />
         <ObjectDataProvider x:Key="Barcodes" MethodName="GetValues" ObjectType="{x:Type system:Enum}">
             <ObjectDataProvider.MethodParameters>
                 <x:Type TypeName="zxing:BarcodeFormat" />
@@ -39,6 +40,53 @@
                 <x:Type TypeName="local:SatisTipi" />
             </ObjectDataProvider.MethodParameters>
         </ObjectDataProvider>
+        <Style x:Key="TaksitListViewItemStyle" TargetType="{x:Type ListViewItem}">
+            <Style.Triggers>
+                <DataTrigger Binding="{Binding TaksitBitti}" Value="true">
+                    <Setter Property="Background" Value="LightGreen" />
+                    <Setter Property="IsEnabled" Value="False" />
+                </DataTrigger>
+            </Style.Triggers>
+        </Style>
+        <GridView x:Key="TaksitViewBase" x:Shared="False">
+            <GridViewColumn Header="SIRA" DisplayMemberBinding="{Binding TaksitSira}" />
+            <GridViewColumn Header="VADE" DisplayMemberBinding="{Binding Vade, StringFormat=\{0:d\}}" />
+            <GridViewColumn Header="ÖDEME&#xA;TARİHİ">
+                <GridViewColumn.CellTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding TaksitOdenmeTarihi, StringFormat=\{0:d\}}">
+                            <TextBlock.Style>
+                                <Style TargetType="{x:Type TextBlock}">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding TaksitOdenmeTarihi}" Value="1.01.0001">
+                                            <Setter Property="Visibility" Value="Collapsed" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </TextBlock.Style>
+                        </TextBlock>
+                    </DataTemplate>
+                </GridViewColumn.CellTemplate>
+            </GridViewColumn>
+            <GridViewColumn Header="TUTAR" DisplayMemberBinding="{Binding TaksitTutar, StringFormat=\{0:C\}}" />
+            <GridViewColumn Header="ÖDENEN">
+                <GridViewColumn.CellTemplate>
+                    <DataTemplate>
+                        <Extensions:NumericUpDownControl CurrencyMode="True"
+                            Maximum="{x:Static system:Double.MaxValue}"
+                            Orientation="Vertical"
+                            Value="{Binding OdenenTutar, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    </DataTemplate>
+                </GridViewColumn.CellTemplate>
+            </GridViewColumn>
+            <GridViewColumn>
+                <GridViewColumn.CellTemplate>
+                    <DataTemplate>
+                        <Button Content="İŞLE" Command="{Binding DataContext.TaksitKapat, RelativeSource={RelativeSource AncestorType={x:Type local:MainWindow}}}" CommandParameter="{Binding Mode=OneWay}" />
+                    </DataTemplate>
+                </GridViewColumn.CellTemplate>
+            </GridViewColumn>
+        </GridView>
     </Window.Resources>
     <Grid x:Name="grid">
         <Grid.ColumnDefinitions>
@@ -634,59 +682,10 @@
                                     </ListView.View>
                                 </ListView>
                                 <GroupBox Header="TAKSİT DURUMU" Grid.Column="1">
-                                    <ListView IsEnabled="{Binding DataContext.Satis.SeçiliSatis.IadeEdildiMi, Converter={StaticResource ReverseBooleanConverter}, RelativeSource={RelativeSource AncestorType=local:MainWindow}}" ItemsSource="{Binding Path=DataContext.Satis.SeçiliSatis.Taksitler, Mode=OneWay, RelativeSource={RelativeSource AncestorType=local:MainWindow}}">
-                                        <ListView.ItemContainerStyle>
-                                            <Style TargetType="ListViewItem">
-                                                <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding TaksitBitti}" Value="true">
-                                                        <Setter Property="Background" Value="LightGreen" />
-                                                        <Setter Property="IsEnabled" Value="False" />
-                                                    </DataTrigger>
-                                                </Style.Triggers>
-                                            </Style>
-                                        </ListView.ItemContainerStyle>
-                                        <ListView.View>
-                                            <GridView>
-                                                <GridViewColumn Header="SIRA" DisplayMemberBinding="{Binding TaksitSira}" />
-                                                <GridViewColumn Header="VADE" DisplayMemberBinding="{Binding Vade, StringFormat=\{0:d\}}" />
-                                                <GridViewColumn Header="ÖDEME&#x0a;TARİHİ">
-                                                    <GridViewColumn.CellTemplate>
-                                                        <DataTemplate>
-                                                            <TextBlock Text="{Binding TaksitOdenmeTarihi, StringFormat=\{0:d\}}">
-                                                                <TextBlock.Style>
-                                                                    <Style TargetType="TextBlock">
-                                                                        <Style.Triggers>
-                                                                            <DataTrigger Binding="{Binding TaksitOdenmeTarihi}" Value="1.01.0001">
-                                                                                <Setter Property="Visibility" Value="Collapsed" />
-                                                                            </DataTrigger>
-                                                                        </Style.Triggers>
-                                                                    </Style>
-                                                                </TextBlock.Style>
-                                                            </TextBlock>
-                                                        </DataTemplate>
-                                                    </GridViewColumn.CellTemplate>
-                                                </GridViewColumn>
-                                                <GridViewColumn Header="TUTAR" DisplayMemberBinding="{Binding TaksitTutar, StringFormat=\{0:C\}}" />
-                                                <GridViewColumn Header="ÖDENEN">
-                                                    <GridViewColumn.CellTemplate>
-                                                        <DataTemplate>
-                                                            <Extensions:NumericUpDownControl CurrencyMode="True"
-                                                                Maximum="{x:Static system:Double.MaxValue}"
-                                                                Orientation="Vertical"
-                                                                Value="{Binding OdenenTutar, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                                                        </DataTemplate>
-                                                    </GridViewColumn.CellTemplate>
-                                                </GridViewColumn>
-                                                <GridViewColumn>
-                                                    <GridViewColumn.CellTemplate>
-                                                        <DataTemplate>
-                                                            <Button Content="İŞLE" Command="{Binding DataContext.TaksitKapat, RelativeSource={RelativeSource AncestorType=local:MainWindow}}" CommandParameter="{Binding Mode=OneWay}" />
-                                                        </DataTemplate>
-                                                    </GridViewColumn.CellTemplate>
-                                                </GridViewColumn>
-                                            </GridView>
-                                        </ListView.View>
-                                    </ListView>
+                                    <ListView IsEnabled="{Binding DataContext.Satis.SeçiliSatis.IadeEdildiMi, Converter={StaticResource ReverseBooleanConverter}, RelativeSource={RelativeSource AncestorType=local:MainWindow}}"
+                                        ItemsSource="{Binding Path=DataContext.Satis.SeçiliSatis.Taksitler, Mode=OneWay, RelativeSource={RelativeSource AncestorType=local:MainWindow}}"
+                                        ItemContainerStyle="{StaticResource TaksitListViewItemStyle}"
+                                        View="{StaticResource TaksitViewBase}" />
                                 </GroupBox>
                             </Grid>
                         </TabItem>
@@ -717,7 +716,10 @@
                                             <Style TargetType="TextBlock">
                                                 <Setter Property="Foreground" Value="Red" />
                                                 <Style.Triggers>
-                                                    <DataTrigger Binding="{Binding Satis.YaklaşanTaksitler.Count}" Value="0">
+                                                    <DataTrigger Binding="{Binding Count, Mode=OneWay, Source={StaticResource CvsYaklaşanTaksitler}}" Value="0">
+                                                        <Setter Property="Foreground" Value="Black" />
+                                                    </DataTrigger>
+                                                    <DataTrigger Binding="{Binding Mode=OneWay, Source={StaticResource CvsYaklaşanTaksitler}}" Value="{x:Null}">
                                                         <Setter Property="Foreground" Value="Black" />
                                                     </DataTrigger>
                                                 </Style.Triggers>
@@ -727,7 +729,7 @@
                                 </StackPanel>
                             </TabItem.Header>
                             <Grid>
-                                <ListView ItemsSource="{Binding Satis.YaklaşanTaksitler}">
+                                <ListView ItemsSource="{Binding Mode=OneWay, Source={StaticResource CvsYaklaşanTaksitler}}">
                                     <ListView.View>
                                         <GridView>
                                             <GridViewColumn Header="MALZEME" DisplayMemberBinding="{Binding Aciklama}" />

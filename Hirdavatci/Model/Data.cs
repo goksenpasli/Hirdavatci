@@ -108,6 +108,8 @@ namespace Hirdavatci
 
         private int toplamAdet;
 
+        private ObservableCollection<Satis> yaklaşanTaksitler;
+
         [XmlAttribute(AttributeName = "Aciklama")]
         public string Aciklama
         {
@@ -359,6 +361,29 @@ namespace Hirdavatci
                 {
                     toplamAdet = value;
                     OnPropertyChanged(nameof(ToplamAdet));
+                }
+            }
+        }
+
+        [XmlIgnore]
+        public ObservableCollection<Satis> YaklaşanTaksitler
+        {
+            get
+            {
+                if (ExtensionMethods.YaklaşanTaksitleriAl() != null)
+                {
+                    yaklaşanTaksitler = new ObservableCollection<Satis>(ExtensionMethods.YaklaşanTaksitleriAl());
+                    return yaklaşanTaksitler;
+                }
+                return null;
+            }
+
+            set
+            {
+                if (yaklaşanTaksitler != value)
+                {
+                    yaklaşanTaksitler = value;
+                    OnPropertyChanged(nameof(YaklaşanTaksitler));
                 }
             }
         }
@@ -648,9 +673,6 @@ namespace Hirdavatci
                 }
             }
         }
-
-        [XmlIgnore]
-        public IEnumerable<Satis> YaklaşanTaksitler { get; set; } = ExtensionMethods.YaklaşanTaksitleriAl();
     }
 
     [XmlRoot(ElementName = "Taksit")]
@@ -829,5 +851,4 @@ namespace Hirdavatci
             }
         }
     }
-
 }
