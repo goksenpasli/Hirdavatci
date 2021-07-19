@@ -33,6 +33,13 @@ namespace Hirdavatci
             }
         }
 
+        public static T DeSerialize<T>(this string xmldatapath) where T : class, new()
+        {
+            XmlSerializer serializer = new(typeof(T));
+            using StreamReader stream = new(xmldatapath);
+            return serializer.Deserialize(stream) as T;
+        }
+
         public static IEnumerable<Malzeme> ExceldenVeriAl(this string dosyayolu)
         {
             try
@@ -119,11 +126,11 @@ namespace Hirdavatci
             serializer.Serialize(stream, dataToSerialize);
         }
 
-        public static IEnumerable<Satis> YaklaşanTaksitleriAl(double gün = 100)
+        public static IEnumerable<Satis> YaklaşanTaksitleriAl(double gün = 10)
         {
             return !File.Exists(xmldatapath)
                 ? null
-                : XElement.Load(xmldatapath).Descendants("Satislar").GroupBy(x => x, (satislar, _) => new Satis()
+                : XElement.Load(xmldatapath).Descendants("Satislar").Select(satislar => new Satis()
                 {
                     Aciklama = satislar?.Parent?.Attribute("Aciklama").Value,
                     SatinAlanKisi = satislar?.Attribute("SatinAlanKisi")?.Value,

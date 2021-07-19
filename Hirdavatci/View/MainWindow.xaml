@@ -261,7 +261,7 @@
                         </ListView.ItemContainerStyle>
                         <ListView.View>
                             <GridView>
-                                <GridViewColumn Header="RESİM" Width="60">
+                                <GridViewColumn Header="RESİM" Width="70">
                                     <GridViewColumn.CellTemplate>
                                         <DataTemplate>
                                             <StackPanel Orientation="Horizontal">
@@ -270,7 +270,9 @@
                                                         <Run Text="+" />
                                                     </Hyperlink>
                                                 </TextBlock>
-                                                <Image Cursor="Hand" Source="{Binding ResimYolu, Mode=OneWay, IsAsync=True, ConverterParameter='48', Converter={StaticResource DataImageFilePathImageUriConverter}}">
+                                                <Image Width="48" MaxHeight="48"
+                                                    Cursor="Hand"
+                                                    Source="{Binding ResimYolu, Mode=OneWay, IsAsync=True, ConverterParameter='48', Converter={StaticResource DataImageFilePathImageUriConverter}}">
                                                     <Image.InputBindings>
                                                         <MouseBinding Command="{Binding DataContext.DosyaÇalıştır, ElementName=grid}" CommandParameter="{Binding ResimYolu, Mode=OneWay}" MouseAction="LeftClick" />
                                                     </Image.InputBindings>
